@@ -2,6 +2,21 @@
 ### Search Twitter###
 #####################
 
+#### Searching Twitter #### 
+## https://github.com/DataTacticsCorp/helper_r/blob/master/Twitter_scraper.r  ##
+## or, # https://github.com/DataTacticsCorp/helper_r/blob/master/Twitter_scraper.r ##
+
+# To begin ingesting social media data from Twitter, you’ll need a developer account on Twitter. 
+# You can start one (free of cost) at https://dev.twitter.com/apps. Once you have a Twitter account, 
+# return to that page and enter your username and password. Now, simply click the Create New Application 
+# button, and enter the requested information. Note that these inputs are neither important nor binding; 
+# just provide a name, description, and website (even just a personal blog) in the required fields.
+
+
+# Now that we have set up an application with Twitter, we need to download the R package that allows us to 
+# pull tweets into our local R session. After you have downloaded the twitteR package, load it by typing 
+# library(twitteR).
+
 ## get working directory
 getwd()
 
