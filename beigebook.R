@@ -6,6 +6,12 @@
 # begin code
 ###################################
 
+require(RCurl)
+require(SnowBallC)
+require(RColorBrewer)
+require(ggplot2)
+require(twitteR)
+require(tm)
 # The Beige Book (http://www.federalreserve.gov/monetarypolicy/beigebook)
 # The https_function, located on the authors' GitHub account 
 # (https://github.com/SocialMediaMininginR/https_function/blob/master/https_function.R), 
@@ -63,9 +69,17 @@ neg_finance<- scan(file.path("/Users/heimannrichard/Google Drive/Spatial Analysi
 # combine both files into one
 neg_all<- c(neg, neg_finance)
 
-download.file("https://raw.github.com/SocialMediaMininginR/beigebook/master/bb_full.csv", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/BB.csv", method = "curl")
-BB <- read.csv("/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/BB.csv", quote = "", sep="|")
+download.file("https://raw.github.com/SocialMediaMininginR/beigebook/master/BB_96_2013_noquotes.psv", 
+              destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/BB_96_2013_noquotes.psv", 
+              method = "curl")
 
+BB <- read.csv("/Users/heimannrichard/Documents/github/beigebook/beigebookdata/BB_96_2013_noquotes.psv", quote = "", sep="|")
+BB <- read.table("/Users/heimannrichard/Documents/github/beigebook/beigebookdata/BB_96_2013_noquotes.tsv", 
+                 quote = "", header=TRUE, sep="\t")
+
+
+
+header=TRUE, sep="\t",
 # colnames(BB)
 # [1] "year""month""text"
 # cast(BB, year ~ month, length)(
@@ -141,9 +155,9 @@ colnames(BB)
 # bb.text_stm<- tm_map(bb_corpus, stemDocument)
 # 
 # # Standard stopwords such as the “SMART” list can be found in the tm package. 
-# stnd.stopwords<- stopwords("SMART")
-# head(stnd.stopwords)
-# length(stnd.stopwords)
+stnd.stopwords<- stopwords("SMART")
+head(stnd.stopwords)
+length(stnd.stopwords)
 # # [1] 571
 
 # the standard stopwords are useful starting points but we may want to add corpus specific words 
