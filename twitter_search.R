@@ -45,6 +45,9 @@ iq2 <- searchTwitter("Search", n=500)
 # track rate limits
 rate.limit <- getCurRateLimitInfo(c("lists"))
 
+# no loop
+t1 <- searchTwitter("#Snowden", n=500, cainfo="C:/Projects/Text Analysis/cacert.pem", lang="en", retryOnRateLimit=1000)
+
 # loop to populate with pause to automate search
 # sleepTime = time to sleep 
 sleepTime<- 10
