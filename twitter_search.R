@@ -133,12 +133,12 @@ library("twitteR")
 
 # #download a cerert.pem file and save it locally (Windows Machine)
 download.file(url="http://curl.haxx.se/ca/cacert.pem", 
-  destfile="C:/Users/GIS/Documents/tweets/cacert.pem")
+  destfile="C:/../cacert.pem")
 
 
 # save api key and secret key from your application api key generation. 
-my.key<- "L3hRdhUHpmbPdpnD527EAabk2"
-my.secret<- "yzE3AbGI6ngeDloG0UzjNYucc4ws63if6qcwgMcXj49DdzLcT1"
+my.key<- "xx"
+my.secret<- "xx"
 
 
 # OAuth with request, access and auth URLs and key + secret
@@ -150,11 +150,11 @@ cred <- OAuthFactory$new(consumerKey=my.key,
 
 
 # handshake with cred
-cred$handshake(cainfo="C:/Users/GIS/Documents/tweets/cacert.pem")
+cred$handshake(cainfo="C:/../cacert.pem")
 
 
 #Finally, save your authentication settings:  
-save(cred, file="C:/Users/GIS/Documents/tweets/twitter.Rdata")
+save(cred, file="C:/../twitter.Rdata")
 
 
 library(RCurl) 
@@ -167,8 +167,22 @@ registerTwitterOAuth(cred)
 
 # searching twitter using searchTwitter parameters equal what you want to search for and 
 # number of tweets returned (n)
-gis <- searchTwitter("GIS", n=500, cainfo="C:/Users/GIS/Documents/tweets/cacert.pem") 
+gis <- searchTwitter("GIS", n=500, cainfo="C:/../cacert.pem") 
 
 
 # track rate limits
 rate.limit <- getCurRateLimitInfo(c("lists"))
+
+# loop to populate with pause to automate search
+# sleepTime = time to sleep 
+sleepTime<- 10
+# loop
+for (i in 1:3){
+  Sys.sleep(sleepTime)
+  # Download latest n tweets for search term
+  iq <- searchTwitter("Iraq", n=500, cainfo="C:/../cacert.pem") 
+  df <- do.call("rbind", lapply(iq, as.data.frame)) 
+  # Save tweets to file
+  write.table(df, file="C:/../tweets.csv", append=TRUE, row.names=F)
+  print(i)
+}
