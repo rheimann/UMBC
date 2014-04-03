@@ -105,3 +105,70 @@ for (i in 1:3){
 #   print('Sleeping for 60 seconds...')
 #   Sys.sleep(60); 
 # }
+
+
+
+# April 3
+
+#####################
+### Search Twitter###
+#####################
+
+
+## get working directory
+getwd()
+
+
+## set working directory
+setwd("Your directory")
+
+
+# install twitteR
+# load twitteR
+install.packages("twitteR", dependencies=TRUE)
+library("twitteR")
+
+
+
+
+# #download a cerert.pem file and save it locally (Windows Machine)
+download.file(url="http://curl.haxx.se/ca/cacert.pem", 
+  destfile="C:/Users/GIS/Documents/tweets/cacert.pem")
+
+
+# save api key and secret key from your application api key generation. 
+my.key<- "L3hRdhUHpmbPdpnD527EAabk2"
+my.secret<- "yzE3AbGI6ngeDloG0UzjNYucc4ws63if6qcwgMcXj49DdzLcT1"
+
+
+# OAuth with request, access and auth URLs and key + secret
+cred <- OAuthFactory$new(consumerKey=my.key,
+                         consumerSecret=my.secret,
+                         requestURL='https://api.twitter.com/oauth/request_token',
+                         accessURL='https://api.twitter.com/oauth/access_token',
+                         authURL='https://api.twitter.com/oauth/authorize')
+
+
+# handshake with cred
+cred$handshake(cainfo="C:/Users/GIS/Documents/tweets/cacert.pem")
+
+
+#Finally, save your authentication settings:  
+save(cred, file="C:/Users/GIS/Documents/tweets/twitter.Rdata")
+
+
+library(RCurl) 
+# Set SSL certs globally
+options(RCurlOptions = list(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl")))
+
+# test whether you have successfully authorized with twitter api
+registerTwitterOAuth(cred)
+
+
+# searching twitter using searchTwitter parameters equal what you want to search for and 
+# number of tweets returned (n)
+gis <- searchTwitter("GIS", n=500, cainfo="C:/Users/GIS/Documents/tweets/cacert.pem") 
+
+
+# track rate limits
+rate.limit <- getCurRateLimitInfo(c("lists"))
