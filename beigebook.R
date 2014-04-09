@@ -6,6 +6,8 @@
 # begin code
 ###################################
 
+install.packages("ROAuth")
+library(ROAuth)
 require(RCurl)
 require(SnowBallC)
 require(RColorBrewer)
