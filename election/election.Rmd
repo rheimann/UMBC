@@ -1,0 +1,190 @@
+GES673 Lab @ UMBC by Richard Heimann
+========================================================
+
+***Dataset Background***
+
+The datasets for this lab relate to voting results from the United States presidential election of 2004. The election was the 55th quadrennial presidential election. It was held on Tuesday, November 2, 2004. Republican Party candidate and incumbent President George W. Bush defeated Democratic Party candidate John Kerry, the then-junior Senator from Massachusetts.from the 2004 US presidential election - where Bush beat Kerry. 
+
+***Nominee  George W. Bush (Republican), VP Cheney	John Kerry (Democratic), VP Edwards*** 
+
+    *Electoral vote:	286[2]	    251[2][3]
+    *States carried:	31	        19 + DC
+    *Popular vote:	  62,040,610	59,028,444
+    *Percentage:    	50.7%	      48.3%
+
+Red State / Blue State (Famous Election Map): http://en.wikipedia.org/wiki/File:2004_US_elections_map_electoral_votes.png
+
+
+
+```{r}
+library(maps)         ## Projections
+library(maptools)     ## Data management
+library(sp)           ## Data management
+library(spdep)        ## Spatial autocorrelation
+library(gstat)        ## Geostatistics
+library(splancs)      ## Kernel Density
+library(spatstat)     ## Geostatistics
+library(pgirmess)     ## Spatial autocorrelation
+library(RColorBrewer) ## Visualization
+library(classInt)     ## Class intervals
+library(spgwr)        ## GWR
+```
+
+
+```{r}
+setwd("/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/spacestats/CodeData")                 
+load("Datasets.RData")
+ls()
+save(laos,crime,cities,election,dat88,mat88,file="Rspatial_lab.RData")
+
+```
+
+```{r}
+summary(election)
+names(election)
+data <- election
+```
+
+```{r}
+# proj4string(data) <- CRS("+proj=lcc+lon_0=90w +lat_1=20n +lat_2=60n")
+summary(data)[1:4]
+```
+
+```{r}
+par(mar=c(0,0,0,0))
+plot(data)
+```
+
+```{r}
+# Look at some of the options
+par(mar=c(0,3,0,0),cex=.6)
+display.brewer.all(n=5)
+
+# Create blue-state red-state palette
+br.palette <- colorRampPalette(c("blue", "red"), space = "rgb")
+br.palette(5)
+```
+
+```{r}
+# Let's plot the % of vote for Bush
+data <- election
+var <- data$Bush_pct
+summary(var)
+```
+
+## What is the mean vote for Bush? What was reported above? Is there a difference? If so, WHY? 
+
+```{r fig.width=20, fig.height=16}
+# Easy but unflexible option
+spplot(data, zcol="Bush_pct", col.regions=br.palette(100), main="Percent of County Vote for Bush (2004)")
+```
+
+## What general patterns do you detect? Are you able to determine some smooth and rough patterns? 
+
+```{r}
+# This section hopefully gives more intuition about plotting and specifically classification for symbol classes.
+
+# Define number of colors in a palette
+pal <- br.palette(n=5)
+
+# Class intervals for symbol classes
+classes_fx <- classIntervals(var, n=5, style="fixed", fixedBreaks=c(0, 10, 25, 50, 75, 100), rtimes = 1)
+classes_sd <- classIntervals(var, n=5, style = "sd", rtimes = 1)
+classes_fi <- classIntervals(var, n=5, style = "fisher", rtimes = 3)
+classes_eq <- classIntervals(var, n=5, style = "equal", rtimes = 1)
+classes_km <- classIntervals(var, n=5, style = "kmeans", rtimes = 1)
+classes_qt <- classIntervals(var, n=5, style = "quantile", rtimes = 1)
+
+# Class intervals for symbol classes (print values)
+classes_fx
+classes_sd
+classes_fi
+classes_eq
+classes_km
+classes_qt
+
+# Class intervals for symbol classes (plot values) || Take some time to compare the impact of the various class intervals.
+par(mar=c(2,2,2,1)+0.1, mfrow=c(2,3))
+plot(classes_fx, pal=pal, main="Fixed Intervals", xlab="", ylab="")
+plot(classes_sd, pal=pal, main="Standard Deviation", xlab="", ylab="")
+plot(classes_fi, pal=pal, main="Fisher-Jenks", xlab="", ylab="")
+plot(classes_km, pal=pal, main="K Means", xlab="", ylab="")
+plot(classes_eq, pal=pal, main="Equal Interval", xlab="", ylab="")
+plot(classes_qt, pal=pal, main="Quantile", xlab="", ylab="")
+```
+
+```{r fig.width=20, fig.height=16}
+# plot using fixed intervals
+cols <- findColours(classes_fx, pal)
+
+par(mar=rep(0,4))
+plot(election,col=cols,border=NA)
+legend(x="bottom", cex=.7, fill=attr(cols,"palette"), bty="n",legend=names(attr(cols, "table")),
+       title="Percent of County Vote for Bush (2004)", ncol=5)
+```
+
+```{r fig.width=20, fig.height=16}
+# We have been using percent vote which is a continuous variable. Now lets plot a categorical variable, specifically a     # binary variable for winning vote for Bush/Kerry respectively (Red/Blue).
+
+# We are creating a new data object of class "character" that has the RGB values for red and blue or if bush > kerry (red) # and if kerry > bush (blue).
+binary.cols <- ifelse(data$Bush > data$Kerry, "red","blue")
+class(binary.cols)
+
+par(mar=rep(0,4))
+# We now map cols and add a legend
+plot(election, col=binary.cols, border=NA)
+legend(x="bottom", cex=.7, fill=c("red","blue"), bty="n", legend=c("Bush","Kerry"), title="Winner of County Vote (2004)",ncol=2)
+```
+
+## Spatial Autocorrelation
+
+```{r}
+map_crd <- coordinates(data)
+
+## Contiguity Neighbors
+
+W_cont_el <- poly2nb(data, queen=T)
+W_cont_el_mat <- nb2listw(W_cont_el, style="W", zero.policy=TRUE)
+```
+
+
+```{r}
+## Plot the connections
+
+par(mar=rep(0,4))
+plot(W_cont_el_mat,coords=map_crd,pch=19, cex=0.1, col="gray")
+```
+
+```{r}
+# Global Autocorrelation Tests: Moran's I
+
+moran.test(data$Bush_pct, listw=W_cont_el_mat, zero.policy=T)
+moran.test(data$Kerry, listw=W_cont_el_mat, zero.policy=T)
+moran.test(data$POP2000, listw=W_cont_el_mat, zero.policy=T)
+```
+
+## What can you tell about the raw Moran's I statistic? 
+## What can you tell about the raw Moran's I statistic standard deviation? 
+## What can you tell about the raw Moran's I statistic p-value?
+## Using the Moran's I output (I, SD & p-value) what can you say about the so-called "two map comparison" between 
+  * Bush & Kerry 
+  * Bush/Kerry & Population
+  
+  
+## Joint Count (JC) Statistics are quite rudementary yet useful when data has been collected at a nominal or ordinal level of measurement. JC evaluates the presence or the absence of a specific thematic property. We have been considering characteristics of continious spatial distributions and spatial dependency of continious variables but recall that as a good analyst we need to be able to understand how our items have been measured as well as to what level of measurement they have been measured. 
+
+## The nominal level can be particular category or a set of categories, for example the presence of a socio-economic category or a type of plant association or whether citizens of the US voted for one canidate or another. Essentially, the thematic property to be described is  reduced to a variable of binomial level (a binary variable) containing only two values referring to the properties of presence/absence (e.g. yes/no, white/black, 0/1, bush/kerry). 
+
+```{r}
+# Global Autocorrelation Tests: Join Count
+data$BushWin <- as.factor(ifelse(data$Bush > data$Kerry,1,0))
+joincount.multi(data$BushWin, listw=W_cont_el_mat, zero.policy=T)
+```
+
+
+```{r}
+## Moran Scatterplot
+par(mar=c(4,4,1.5,0.5))
+moran.plot(data$Bush_pct, listw=W_cont_el_mat, zero.policy=T, xlim=c(0,100),ylim=c(0,100), pch=16, col="black",cex=.5,     quiet=F, labels=as.character(data$NAME),xlab="Percent for Bush", ylab="Percent for Bush (Spatial Lag)", main="Moran Scatterplot")
+```
+
