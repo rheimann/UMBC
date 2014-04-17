@@ -1,49 +1,62 @@
 # GES 673 Cleaning your Data  #
 ### by Richard Heimann (ref: David Springate @datajujitsu) ###
 
-##### The .Rmd source and data for this tutorial can be found [here](https://github.com/DASpringate/tutorials)
+##### The .Rmd source and data for this tutorial can be found [here](https://github.com/rheimann/UMBC/tree/master/beginners)
+##### more info:http://cran.r-project.org/doc/contrib/de_Jonge+van_der_Loo-Introduction_to_data_cleaning_with_R.pdf
 ========================================================
 
 --------------------
 
 ## Session outline
 
-* Why use R for cleaning data?
-* Subsetting operators
-* Subsetting vectors
-* Subsetting Dataframes
-* Using subsetting to alter your data
-* Building a data-cleaning script
+* Why is it important to clean data? 
+* What types of errors exist? 
+* How R can be used to clean your data. 
+* Subsetting operators in R
+* Subsetting vectors in R
+* Subsetting Dataframes in R
+* Using subsetting to alter your data in R
+* Building a data-cleaning script in R
 * Problems
 
 -------------------------
 
-## Why not just use Excel?
+## Why not just use ArcGIS or Excel?
 
-Excel is _ok_, __BUT__ 
+Excel and ArcGIS is _ok_, __BUT__ 
 
 * Not scriptable
-* Point and click - Has no way of tracking workflow
-* Rubbish for large datasets
+* Point and click - Has no way of tracking workflow /bad for learning/bad for teaching/!
+* Not very good for large datasets - recall that there are going to be social media sources that will not open in either. 
 * Alters the data in place - No long-term undo
 
 Most of the time doing statistics is actually spent cleaning data.
 
-You want to be able to do this in a trackable and reproducable way!
+Research and data analysis is often about reproduction and repreatability. You want to be able to do this in a trackable and reproducable way!
 
 ----------------------------
 
-## A typical R workflow
+## A typical workflow
 
-1. Do your experiment
-2. Enter your data in Excel
-3. Save as .csv
-4. Clean data in R, update data cleaning script
-5. Do some stats
-6. Realise data is still really dirty
-7. Go to 4
+1. Write out research question.
+2. Define Design.
+3. Choose variables and determine measurement.
+4. Clean Data / Create New Variables.
+  a. Load our data. 
+  b. Visualize the data.
+  c. Do some statistics (e.g. smooth, rough, point estimates, intervals, etc).
+  d. Clean data in R or ArcGIS, update data cleaning script.
+  e. Visualize your data. 
+  f. Realize your data is still dirty and start again. 
+  g. Finally save your clean data and move to subsequent steps.
+5.Univariate and Multivariate Statistics (EDA/ESDA)
+6. Run Initial Model
+7. Diagnostics | Check assumptions 
+8. Refine Model
+9. Interpret Results.
+10. Present results in an intuitive manner. 
 
-Once you have entered your original data, this remains fixed.
+R and scripting allows you to rinse and repeat much easier.
 
 -----------------------------
 
@@ -114,17 +127,19 @@ e.g.
 x >= 1.96
 ```
 
+### Why is 1.96 selected? Recall our discussions on what may constitute an error or outlier.
+### HINT: 
+<a href="http://upload.wikimedia.org/wikipedia/en/b/bf/NormalDist1.96" title="zipcode_lisa by Richard Heimann, on Flickr"><img src="http://upload.wikimedia.org/wikipedia/en/b/bf/NormalDist1.96.png" width="500" height="229" alt="zipcode_lisa"></a>
+
 ... so you can also subset by these:
 
 ```{r, tidy = FALSE}
 x[x >= 1.96]
-x[x < 1]
+x[x <= -1.96]
 x[x >= 1.96 | x <= -1.96] # can be as complicated as you like
-# What is this doing?
-x[1:50 %% 2 == 0] # %% is the modulo operator (remainder of a division of one number by another)
 ```
 
-Of course, each returned subset can be assigned to a new symbol:
+Of course, each returned subset can be assigned to a new symbol. This can be considered a feature selection of sorts. We may seek out only certain values or certain observations in our study area. In lab 1 & 2 we performed several spatial feature selections and reinforced feature selection during our reading in the Geospatial Analysis Workbook. This is easier to do in R and ArcGIS than in Geoda. 
 
 ```{r, tidy = FALSE}
 y <- x[x > 0 & x < 2]
@@ -135,16 +150,19 @@ y
 
 ## Subsetting data frames 
 
-The principle is the same, but it is more complicated because dataframes have 2 dimensions (rows and columns)
+The principle is the same, but it is more complicated because dataframes have 2 dimensions (rows and columns). Dataframes are what you are used to working with in most GIS systems akin to a shapefile so this should mitigate matters. 
 
-Now we use two subsetting expressions [first rows, then columns] separated by a comma
+Now we use two subsetting expressions [first rows, then columns] separated by a comma.
 
 We will be using a version of Fisher's Iris data that I have mangled!
 
 You can get the original data by calling `data(iris)`
 
 ```{r, tidy = FALSE}
-iris <- read.csv("~/Dropbox/tutorials/subsetting/iris_mangled.csv")
+# original data 
+# data(iris)
+# data located in the UMBC Github repo "beginners"
+iris <- read.csv("/Users/heimannrichard/Documents/github/UMBC/beginners/iris_mangled.csv")
 # If you make a mistake, just call this again to get you back to the start!
 ```
 
@@ -155,15 +173,22 @@ iris$Sepal.Length
 iris$Petal.Length
 ```
 
-You have already learned about functions to examine your data, e.g.
+Just as you might do in ArcGIS or Excel you can quickly and easily explore your data to get a sense of the nature of the data. 
 
-```{r, tidy = FALSE, eval = FALSE}
+```{r, tidy = FALSE, eval = TRUE}
 summary(iris)
 head(iris)
 names(iris)
 str(iris)
-View(iris)
 ```
+
+```{r, tidy = FALSE, eval = FALSE}
+# view is also nice as it puts the output into a table like view. due to limitations in R markdown however this will not be executed. 
+View(iris)
+View(head(iris))
+View(tail(iris))
+```
+
 
 Also useful for exploring your data is the pairs function
 
@@ -173,46 +198,62 @@ This builds a matrix of scatter plots for all pairs of variables in your data
 pairs(iris) 
 ```
 
-But the species factor complicates things, lets remove it:
+## What needs to be done based on this scatterplot? 
+
+----------------------
+----------------------
+----------------------
+----------------------
+
+Looking at this plot, what needs to be done?
+
+1. Species factor complicates things, lets remove it.
+2. Petal.Width and Petal.Breadth are perfectly correlated - remove the duplicate Petal.Breadth
+3. Missing values (NA) in Sepal.Length - remove missing data rows
+4. Petal lengths recorded on the wrong scale (metres rather than centimetres!) - transform back to cm
+5. Outlier in Sepal.Width - correct this error
+
+----------------------
+## 1. Species factor complicates things, lets remove it. 
 
 ```{r, tidy = FALSE}
 pairs(iris[,-5]) # blank before the comma selects all rows, -5 after the comma removes column #5
 ```
 
-Looking at this plot, what needs to be done?
-
-1. Petal.Width and Petal.Breadth are perfectly correlated - remove the duplicate Petal.Breadth
-2. Missing values (NA) in Sepal.Length - remove missing data rows
-3. Petal lengths recorded on the wrong scale (metres rather than centimetres!) - transform back to cm
-4. Big outlier in Sepal.Width - correct this typo
-
 ----------------------
 
-## 1. Removing a column 
+## 2. Petal.Width and Petal.Breadth are perfectly correlated - remove the duplicate Petal.Breadth -- Removing a column 
 
 You can remove a whole column by assigning NULL to it:
 
 ```{r, tidy = FALSE}
+dim(iris)
 iris$petal.Breadth <- NULL
+dim(iris)
 ```
 
 ---------------------
 
-## 2. Removing missing values 
+## 3. Missing values (NA) in Sepal.Length -- remove missing data rows -- Removing missing values 
 
 You can do this using logical vectors:
 
-Remember that you must explicitly reassign the data:
+Remember that you must explicitly reassign the data (iris <- iris[...])
+
+## What kind of deletion is this called? 
 
 ```{r, tidy = FALSE}
+dim(iris)
 iris[!is.na(iris$Sepal.Length),] # returns the correct data, but leaves the original unchanged
 iris$Sepal.Length # Still see NA's
+
 iris <- iris[!is.na(iris$Sepal.Length),] # reassigns the altered data back to iris
 # iris <- iris[complete.cases(iris$Sepal.Length),] # also works
 iris$Sepal.Length # no missing data now
+dim(iris)
 ```
 
-## 3. Transforming a whole column
+## 4. Petal lengths recorded on the wrong scale (metres rather than centimetres!) - transform back to cm -- Transforming a whole column
 
 Remember: Use the tab key to auto-complete variable names!
 
@@ -226,9 +267,16 @@ iris$Petal.Length[iris$Species == "versicolor"] <- iris$Petal.Length[iris$Specie
 pairs(iris[,-5]) 
 ```
 
+Geoda Variable Calculation
+<a href="https://www.flickr.com/photos/ronbumquist/13913888343" title="geoda_calc by Richard Heimann, on Flickr"><img src="https://farm8.staticflickr.com/7332/13913888343_64aee26693.jpg" width="500" height="235" alt="geoda_calc"></a>
+
+Arcgis Field Calculator
+<a href="https://www.flickr.com/photos/ronbumquist/13890718296" title="arcgis_field calculator by Richard Heimann, on Flickr"><img src="https://farm3.staticflickr.com/2821/13890718296_8331e566d9.jpg" width="296" height="282" alt="arcgis_field calculator"></a>
+
+
 ------------------------------
 
-## 4. Changing a single data point
+## 5. Outlier in Sepal.Width - correct this error -- Changing a single data point
 
 The 6th Sepal.Width value is a large outlier...
 
@@ -237,9 +285,13 @@ Looking at the original data recording sheet, you might see that the digits in t
 Fix this:
 
 ```{r, tidy = FALSE}
+# max returns the max value in this case for Sepal.Width
+max(iris$Sepal.Width)
 iris$Sepal.Width[6]
 iris$Sepal.Width[6] <- 3.9
 pairs(iris[,-5]) 
+iris$Sepal.Width[6]
+# FIXED!! 
 ```
 
 __Your data is now cleaned and ready for analysis!__
@@ -248,7 +300,9 @@ __Your data is now cleaned and ready for analysis!__
 
 ## Tip: Make a data cleaning script
 
-It is good practice to separate out your cleaning and analysis scripts
+1. If using R - it is good practice to separate out your cleaning and analysis scripts. 
+2. It is good practice to save your object and save to a new CSV. 
+3. If using ArcGIS to save a copy of your data to preserve integrity. 
 
 e.g. get_data.R:
 
@@ -259,12 +313,6 @@ iris <- iris[!is.na(iris$Sepal.Length),]
 iris$Petal.Length[iris$Species == "versicolor"] <- iris$Petal.Length[iris$Species == "versicolor"] * 100
 iris$Sepal.Width[6] <- 3.9
 ```
-
-This reads in and cleans your data, leaving the original data unchanged
-
-Run this at the start of all of your analysis scripts:
-
-`source("path/to/get_data.R")`
 
 ---------------------
 
