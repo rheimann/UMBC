@@ -1,4 +1,5 @@
-GES673 Lab @ UMBC by Richard Heimann
+# GES 673 ESDA with Election Data #
+### by Richard Heimann ###
 ========================================================
 
 ***Dataset Background***
