@@ -10,13 +10,23 @@ I strongly prefer using the R statistical computing environment for  data analys
 At its most basic, R is simply a calculator. You can ask it what 2 + 2 is, and it will provide you with 4 as the answer. However, R is more flexible than the calculator you used in high school. In fact, its flexibility leads it to be described as a statistical computing environment. As such, it comes with functions that assist us with data manipulation, statistics, and graphing. R can also store, handle, and perform complex mathematical operations on data as well as utilize a suite of statistics- specific functions, such as drawing samples from common probability distributions. Most simply, R is a data analysis software adoringly promoted as being made by statisticians for statisticians. The R programming language is used by data scientists, statisticians, formal scientists, physical scientists, social scientists, and others who need to make sense of data for statistical analysis, data visualization, and predictive modeling. Fortunately, with the brief guidance provided by this document, you too will be using R for your own research. R is simple to learn, even for people with no programming or statistics experience.
 
 #### INSTALL R #### 
-##### To install R, simply point your browser to http://www.r-project.org, ##### 
-#####  and choose a mirror near you. ##### 
+##### To install R, simply point your browser to http://www.r-project.org
+#####  and choose a mirror near you
 
 #### INSTALL RStudio #### 
-#####  An IDE is a programming environment that offers features beyond what is ##### 
-#####  found via the terminal or the command line environment. ##### 
-#####  RStudio (http://www.rstudio.com) ##### 
+#####  An IDE is a programming environment that offers features beyond what is
+#####  found via the terminal or the command line environment
+#####  RStudio (http://www.rstudio.com)
+
+
+```r
+# R Commander is a point and click interface to R. It is limited but does
+# have a wide variety of methods from a classical aspatial sense.
+install.packages("Rcmdr")
+library(Rcmdr)
+```
+
+
 
 
 ```r
@@ -345,7 +355,7 @@ data(cars)
 hist(cars$dist)
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20.png) 
+![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21.png) 
 
 
 
@@ -362,12 +372,12 @@ plot(anscombe$x4, anscombe$y4, xlab = "x4", ylab = "y4", main = "Anscombe 4")
 abline(lm(anscombe$y4 ~ anscombe$x4))
 ```
 
-![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21.png) 
+![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22.png) 
 
 
 
 
-### Style and workflow ### 
+### Style and workflow
 Statistical programmers can think of R code—like other languages—as being dysfunctional, functional but awkward, or graceful. Graceful code is clear and readable, which helps prevent errors. Here are a few tips on writing graceful R code:
 * Filenames should end in .R and be meaningful.
 * Variable names should be short. If necessary, use a period to delineate
@@ -379,11 +389,11 @@ are closed, so feel free to wrap commands across lines for brevity.
 
 For more details on writing good R code, refer to the guide at http://google- styleguide.googlecode.com/svn/trunk/Rguide.xml. Again, though R can be used interactively from within the terminal, it is best practice to develop code within an IDE, such as RStudio, so that it can be saved, changed, and rerun. Additionally, building version controls and persistence into your code by storing it on GitHub may be important, especially if you find yourself working in a group environment. Finally, many users will find the creation of projects useful—the RStudio documentation offers useful tips on this topic.
 
-### Additional resources ### 
+### Additional resources
 This document provides what we hope is a useful, though necessarily brief, introduction to R. There are many resources available that will help you expand your R programming skill set. What follows is a short list of our favorites:
 * A First Course in Statistical Programming with R by Braun and Murdoch (2007)
 * The R Cookbook by Teetor (2011)
 * Quick-R: http://www.statmethods.net/
 
-### Summary ### 
+### Summary
 This document has set out a case for using the R mathematical computing environment for data handling and analysis due to R's zero cost feature, flexibility, and large support community. By now, you've seen how to import, summarize, and visualize datasets as well as run and plot bivariate regression models.

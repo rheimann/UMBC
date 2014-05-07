@@ -756,6 +756,7 @@ Fix this:
 
 
 ```r
+# max returns the max value in this case for Sepal.Width
 max(iris$Sepal.Width)
 ```
 
@@ -778,6 +779,18 @@ pairs(iris[,-5])
 
 ![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
 
+```r
+iris$Sepal.Width[6]
+```
+
+```
+## [1] 3.9
+```
+
+```r
+# FIXED!! 
+```
+
 
 __Your data is now cleaned and ready for analysis!__
 
@@ -785,7 +798,9 @@ __Your data is now cleaned and ready for analysis!__
 
 ## Tip: Make a data cleaning script
 
-It is good practice to separate out your cleaning and analysis scripts
+1. If using R - it is good practice to separate out your cleaning and analysis scripts. 
+2. It is good practice to save your object and save to a new CSV. 
+3. If using ArcGIS to save a copy of your data to preserve integrity. 
 
 e.g. get_data.R:
 
@@ -798,12 +813,6 @@ iris$Petal.Length[iris$Species == "versicolor"] <- iris$Petal.Length[iris$Specie
 iris$Sepal.Width[6] <- 3.9
 ```
 
-
-This reads in and cleans your data, leaving the original data unchanged
-
-Run this at the start of all of your analysis scripts:
-
-`source("path/to/get_data.R")`
 
 ---------------------
 

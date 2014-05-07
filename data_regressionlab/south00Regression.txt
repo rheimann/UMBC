@@ -1,0 +1,56 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0\fnil\fprq12\fcharset0 Courier New;}{\f1\fswiss\fprq2\fcharset0 System;}}
+\viewkind4\uc1\pard\lang1033\f0\fs24 
+\par \b \ul Regression\ulnone \b0 
+\par \b \ul SUMMARY OF OUTPUT: ORDINARY LEAST SQUARES ESTIMATION \ulnone \b0 
+\par Data set            : \b south00 \b0 
+\par Dependent Variable  :\b         PPOV \b0  Number of Observations: 1387
+\par Mean dependent var  :    0.224704  Number of Variables   :    7
+\par S.D. dependent var  :   0.0912078  Degrees of Freedom    : 1380 
+ 
+ 
+\par 
+ 
+\par R-squared           :    0.715689  F-statistic           :     578.973
+\par Adjusted R-squared  :    0.714453  Prob(F-statistic)     :           0
+\par Sum squared residual:     3.28046  Log likelihood        :     2225.47
+\par Sigma-square        :  0.00237714  Akaike info criterion :    -4436.94
+\par S.E. of regression  :    0.048756  Schwarz criterion     :    -4400.29
+\par Sigma-square ML     :  0.00236515
+\par S.E of regression ML:   0.0486328
+
+ 
+ 
+\par -----------------------------------------------------------------------
+\par \b     Variable    Coefficient     Std.Error    t-Statistic   Probability \b0 
+\par -----------------------------------------------------------------------
+\par     CONSTANT     0.1117267     0.01038952       10.75379    0.0000000
+\par         PFHH      0.561342     0.04205314        13.3484    0.0000000
+\par        PUNEM      1.598422     0.06709431        23.8235    0.0000000
+\par         PBLK   -0.08400033      0.0159311      -5.272726    0.0000002
+\par        P65UP    0.08858482     0.03970845       2.230881    0.0258490
+\par        METRO   -0.02451296    0.003268291      -7.500236    0.0000000
+\par      PHSPLUS    -0.2649504     0.01446165       -18.3209    0.0000000
+\par -----------------------------------------------------------------------
+\par 
+ 
+\par 
+\par \bREGRESSION DIAGNOSTICS \b0 
+\par MULTICOLLINEARITY CONDITION NUMBER   22.166325
+\par TEST ON NORMALITY OF ERRORS
+\par TEST                  DF          VALUE            PROB
+\par Jarque-Bera            2           380.9841        0.0000000
+\par 
+ 
+ 
+\par \b DIAGNOSTICS FOR HETEROSKEDASTICITY \b0 
+\par RANDOM COEFFICIENTS
+\par TEST                  DF          VALUE            PROB
+\par Breusch-Pagan test     6           130.6458        0.0000000
+\par Koenker-Bassett test   6           61.56603        0.0000000
+\par SPECIFICATION ROBUST TEST
+\par TEST                  DF          VALUE            PROB
+\par White                 27            N/A            N/A
+\par ========================= END OF REPORT ==============================
+\par 
+ 
+ 

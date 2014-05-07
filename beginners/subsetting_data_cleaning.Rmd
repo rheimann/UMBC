@@ -5,6 +5,8 @@
 ##### more info:http://cran.r-project.org/doc/contrib/de_Jonge+van_der_Loo-Introduction_to_data_cleaning_with_R.pdf
 ========================================================
 
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages and allows both content as well as the output of any embedded R code chunks within a document. 
+
 --------------------
 
 ## Session outline
