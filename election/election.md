@@ -1,5 +1,8 @@
-GES673 Lab @ UMBC by Richard Heimann
+# GES 673 ESDA with Election Data #
+### by Richard Heimann ###
 ========================================================
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages and allows both content as well as the output of any embedded R code chunks within a document. 
 
 ***Dataset Background***
 
@@ -12,9 +15,7 @@ The datasets for this lab relate to voting results from the United States presid
     *Popular vote:	  62,040,610	59,028,444
     *Percentage:    	50.7%	      48.3%
 
-Red State / Blue State (Famous Election Map): http://en.wikipedia.org/wiki/File:2004_US_elections_map_electoral_votes.png
-
-
+<a href="https://www.flickr.com/photos/ronbumquist/13953100887" title="Red State / Blue State (Famous Election Map):"><img src="https://farm3.staticflickr.com/2927/13953100887_2815fcdd0c_s.jpg" width="75" height="75" alt="electionmap"></a>
 
 
 ```r
@@ -355,7 +356,7 @@ summary(var)
 ```
 
 
-## What is the mean vote for Bush? What was reported above? Is there a difference? If so, WHY? 
+### What is the mean vote for Bush? What was reported above? Is there a difference? If so, WHY? 
 
 
 ```r
@@ -366,7 +367,7 @@ spplot(data, zcol = "Bush_pct", col.regions = br.palette(100), main = "Percent o
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
 
 
-## What general patterns do you detect? Are you able to determine some smooth and rough patterns? 
+### What general patterns do you detect? Are you able to determine some smooth and rough patterns? 
 
 
 ```r
@@ -431,8 +432,8 @@ classes_km
 
 ```
 ## style: kmeans
-##     [0,40.28) [40.28,53.37)  [53.37,63.3)  [63.3,73.59) [73.59,92.83] 
-##           187           647           940           857           480
+##     [0,39.63) [39.63,52.85) [52.85,62.93) [62.93,73.38) [73.38,92.83] 
+##           172           615           951           881           492
 ```
 
 ```r
@@ -504,7 +505,7 @@ legend(x = "bottom", cex = 0.7, fill = c("red", "blue"), bty = "n", legend = c("
 ![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
 
 
-## Spatial Autocorrelation
+### Spatial Autocorrelation
 
 
 ```r
@@ -587,17 +588,17 @@ moran.test(data$POP2000, listw = W_cont_el_mat, zero.policy = T)
 ```
 
 
-## What can you tell about the raw Moran's I statistic? 
-## What can you tell about the raw Moran's I statistic standard deviation? 
-## What can you tell about the raw Moran's I statistic p-value?
-## Using the Moran's I output (I, SD & p-value) what can you say about the so-called "two map comparison" between 
+### What can you tell about the raw Moran's I statistic? 
+### What can you tell about the raw Moran's I statistic standard deviation? 
+### What can you tell about the raw Moran's I statistic p-value?
+### Using the Moran's I output (I, SD & p-value) what can you say about the so-called "two map comparison" between 
   * Bush & Kerry 
   * Bush/Kerry & Population
   
   
-## Joint Count (JC) Statistics are quite rudementary yet useful when data has been collected at a nominal or ordinal level of measurement. JC evaluates the presence or the absence of a specific thematic property. We have been considering characteristics of continious spatial distributions and spatial dependency of continious variables but recall that as a good analyst we need to be able to understand how our items have been measured as well as to what level of measurement they have been measured. 
+### Joint Count (JC) Statistics are quite rudementary yet useful when data has been collected at a nominal or ordinal level of measurement. JC evaluates the presence or the absence of a specific thematic property. We have been considering characteristics of continious spatial distributions and spatial dependency of continious variables but recall that as a good analyst we need to be able to understand how our items have been measured as well as to what level of measurement they have been measured. 
 
-## The nominal level can be particular category or a set of categories, for example the presence of a socio-economic category or a type of plant association or whether citizens of the US voted for one canidate or another. Essentially, the thematic property to be described is  reduced to a variable of binomial level (a binary variable) containing only two values referring to the properties of presence/absence (e.g. yes/no, white/black, 0/1, bush/kerry). 
+### The nominal level can be particular category or a set of categories, for example the presence of a socio-economic category or a type of plant association or whether citizens of the US voted for one canidate or another. Essentially, the thematic property to be described is  reduced to a variable of binomial level (a binary variable) containing only two values referring to the properties of presence/absence (e.g. yes/no, white/black, 0/1, bush/kerry). 
 
 
 ```r

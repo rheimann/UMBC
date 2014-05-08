@@ -54,3 +54,74 @@
 \par 
  
  
+{\rtf1\ansi\deff0{\fonttbl{\f0\fnil\fprq12\fcharset0 Courier New;}{\f1\fswiss\fprq2\fcharset0 System;}}
+\viewkind4\uc1\pard\lang1033\f0\fs24 
+\par \b \ul sqrt_ppov\ulnone \b0 
+\par \b \ul SUMMARY OF OUTPUT: ORDINARY LEAST SQUARES ESTIMATION \ulnone \b0 
+\par Data set            : \b south00 \b0 
+\par Dependent Variable  :\b     SQRTPPOV \b0  Number of Observations: 1387
+\par Mean dependent var  :    0.464095  Number of Variables   :    7
+\par S.D. dependent var  :   0.0965369  Degrees of Freedom    : 1380 
+ 
+ 
+\par 
+ 
+\par R-squared           :    0.773570  F-statistic           :     785.765
+\par Adjusted R-squared  :    0.772585  Prob(F-statistic)     :           0
+\par Sum squared residual:     2.92683  Log likelihood        :     2304.57
+\par Sigma-square        :  0.00212089  Akaike info criterion :    -4595.14
+\par S.E. of regression  :   0.0460532  Schwarz criterion     :     -4558.5
+\par Sigma-square ML     :  0.00211019
+\par S.E of regression ML:   0.0459368
+
+ 
+ 
+\par -----------------------------------------------------------------------
+\par \b     Variable    Coefficient     Std.Error    t-Statistic   Probability \b0 
+\par -----------------------------------------------------------------------
+\par     CONSTANT      0.347232     0.00776149       44.73781    0.0000000
+\par         PHSP    0.06504345    0.009988658       6.511731    0.0000000
+\par         PFHH     0.5322545     0.02137086       24.90562    0.0000000
+\par        PUNEM      1.393095     0.06329541       22.00941    0.0000000
+\par        PEXTR     0.3629166     0.02554918       14.20463    0.0000000
+\par        METRO   -0.01667506    0.003074096       -5.42438    0.0000001
+\par      PHSPLUS    -0.2869694     0.01386857      -20.69206    0.0000000
+\par -----------------------------------------------------------------------
+\par 
+ 
+\par 
+\par \bREGRESSION DIAGNOSTICS \b0 
+\par MULTICOLLINEARITY CONDITION NUMBER   16.462002
+\par TEST ON NORMALITY OF ERRORS
+\par TEST                  DF          VALUE            PROB
+\par Jarque-Bera            2           129.6732        0.0000000
+\par 
+ 
+ 
+\par \b DIAGNOSTICS FOR HETEROSKEDASTICITY \b0 
+\par RANDOM COEFFICIENTS
+\par TEST                  DF          VALUE            PROB
+\par Breusch-Pagan test     6            239.851        0.0000000
+\par Koenker-Bassett test   6           138.4181        0.0000000
+\par SPECIFICATION ROBUST TEST
+\par TEST                  DF          VALUE            PROB
+\par White                 27            N/A            N/A
+\par 
+ 
+ 
+\par \b \ul DIAGNOSTICS FOR SPATIAL DEPENDENCE \ulnone \b0 
+\par FOR WEIGHT MATRIX : Queens1st.gal
+   (row-standardized weights)
+\par \b TEST                          MI/DF      VALUE          PROB \b0 
+\par Moran's I (error)           0.309807     N/A            N/A
+\par Lagrange Multiplier (lag)       1      292.2582704      0.0000000
+\par Robust LM (lag)                 1       63.4360221      0.0000000
+\par Lagrange Multiplier (error)     1      366.4149630      0.0000000
+\par Robust LM (error)               1      137.5927148      0.0000000
+\par Lagrange Multiplier (SARMA)     2      429.8509852      0.0000000
+\par ========================= END OF REPORT ==============================
+\par 
+ 
+ 
+\par \b\f1\fs20
+\par }

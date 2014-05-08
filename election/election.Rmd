@@ -15,9 +15,7 @@ The datasets for this lab relate to voting results from the United States presid
     *Popular vote:	  62,040,610	59,028,444
     *Percentage:    	50.7%	      48.3%
 
-Red State / Blue State (Famous Election Map): http://en.wikipedia.org/wiki/File:2004_US_elections_map_electoral_votes.png
-
-
+<a href="https://www.flickr.com/photos/ronbumquist/13953100887" title="Red State / Blue State (Famous Election Map):"><img src="https://farm3.staticflickr.com/2927/13953100887_2815fcdd0c_s.jpg" width="75" height="75" alt="electionmap"></a>
 
 ```{r}
 library(maps)         ## Projections
@@ -75,14 +73,14 @@ var <- data$Bush_pct
 summary(var)
 ```
 
-## What is the mean vote for Bush? What was reported above? Is there a difference? If so, WHY? 
+### What is the mean vote for Bush? What was reported above? Is there a difference? If so, WHY? 
 
 ```{r fig.width=20, fig.height=16}
 # Easy but unflexible option
 spplot(data, zcol="Bush_pct", col.regions=br.palette(100), main="Percent of County Vote for Bush (2004)")
 ```
 
-## What general patterns do you detect? Are you able to determine some smooth and rough patterns? 
+### What general patterns do you detect? Are you able to determine some smooth and rough patterns? 
 
 ```{r}
 # This section hopefully gives more intuition about plotting and specifically classification for symbol classes.
@@ -139,7 +137,7 @@ plot(election, col=binary.cols, border=NA)
 legend(x="bottom", cex=.7, fill=c("red","blue"), bty="n", legend=c("Bush","Kerry"), title="Winner of County Vote (2004)",ncol=2)
 ```
 
-## Spatial Autocorrelation
+### Spatial Autocorrelation
 
 ```{r}
 map_crd <- coordinates(data)
@@ -166,17 +164,17 @@ moran.test(data$Kerry, listw=W_cont_el_mat, zero.policy=T)
 moran.test(data$POP2000, listw=W_cont_el_mat, zero.policy=T)
 ```
 
-## What can you tell about the raw Moran's I statistic? 
-## What can you tell about the raw Moran's I statistic standard deviation? 
-## What can you tell about the raw Moran's I statistic p-value?
-## Using the Moran's I output (I, SD & p-value) what can you say about the so-called "two map comparison" between 
+### What can you tell about the raw Moran's I statistic? 
+### What can you tell about the raw Moran's I statistic standard deviation? 
+### What can you tell about the raw Moran's I statistic p-value?
+### Using the Moran's I output (I, SD & p-value) what can you say about the so-called "two map comparison" between 
   * Bush & Kerry 
   * Bush/Kerry & Population
   
   
-## Joint Count (JC) Statistics are quite rudementary yet useful when data has been collected at a nominal or ordinal level of measurement. JC evaluates the presence or the absence of a specific thematic property. We have been considering characteristics of continious spatial distributions and spatial dependency of continious variables but recall that as a good analyst we need to be able to understand how our items have been measured as well as to what level of measurement they have been measured. 
+### Joint Count (JC) Statistics are quite rudementary yet useful when data has been collected at a nominal or ordinal level of measurement. JC evaluates the presence or the absence of a specific thematic property. We have been considering characteristics of continious spatial distributions and spatial dependency of continious variables but recall that as a good analyst we need to be able to understand how our items have been measured as well as to what level of measurement they have been measured. 
 
-## The nominal level can be particular category or a set of categories, for example the presence of a socio-economic category or a type of plant association or whether citizens of the US voted for one canidate or another. Essentially, the thematic property to be described is  reduced to a variable of binomial level (a binary variable) containing only two values referring to the properties of presence/absence (e.g. yes/no, white/black, 0/1, bush/kerry). 
+### The nominal level can be particular category or a set of categories, for example the presence of a socio-economic category or a type of plant association or whether citizens of the US voted for one canidate or another. Essentially, the thematic property to be described is  reduced to a variable of binomial level (a binary variable) containing only two values referring to the properties of presence/absence (e.g. yes/no, white/black, 0/1, bush/kerry). 
 
 ```{r}
 # Global Autocorrelation Tests: Join Count
@@ -188,6 +186,6 @@ joincount.multi(data$BushWin, listw=W_cont_el_mat, zero.policy=T)
 ```{r}
 ## Moran Scatterplot
 par(mar=c(4,4,1.5,0.5))
-moran.plot(data$Bush_pct, listw=W_cont_el_mat, zero.policy=T, xlim=c(0,100),ylim=c(0,100), pch=16, col="black",cex=.5,     quiet=F, labels=as.character(data$NAME),xlab="Percent for Bush", ylab="Percent for Bush (Spatial Lag)", main="Moran Scatterplot")
+moran.plot(data$Bush_pct, listw=W_cont_el_mat, zero.policy=T, xlim=c(0,100),ylim=c(0,100), pch=16, col="black",cex=.5, quiet=F, labels=as.character(data$NAME),xlab="Percent for Bush", ylab="Percent for Bush (Spatial Lag)", main="Moran Scatterplot")
 ```
 
