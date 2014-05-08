@@ -189,14 +189,28 @@ hljs.initHighlightingOnLoad();
 
 <p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages and allows both content as well as the output of any embedded R code chunks within a document. </p>
 
+<p>The Beige Book (<a href="http://www.federalreserve.gov/monetarypolicy/beigebook">http://www.federalreserve.gov/monetarypolicy/beigebook</a>), more formally called the Summary of Commentary on Current Economic Conditions, is a report published by the United States (US) Federal Research Board (FRB) eight times a year. The report is published by each of the Federal Reserve bank districts ahead of the Federal Open Market committee meeting, and is designed to reflect economic conditions. Despite being a report published by the US FRB the content is rather anecdotal. The report interviews key business contacts, economists, market experts, and others to get their opinion about the economy.</p>
+
+<p>The Beige Book has been in publication since 1985 and is now published online. The data used in this book can be found on GitHub (<a href="https://github.com/SocialMediaMininginR/">https://github.com/SocialMediaMininginR/</a> beigebook), as can the Python code for all the scraping and parsing. An example from the Beige Book (October 2013) full report is below and should give you some idea about the nature of the content. The full report is an aggregated view from the twelve Federal Reserve bank districts.
+￼￼￼￼
+<em>Beige Book (October 2013): Consumer spending grew modestly in most Districts. Auto sales continued to be strong, particularly in the New York District where they were said to be increasingly robust. In contrast, Chicago, Kansas City, and Dallas indicated slower growth in auto sales in September.</em></p>
+
+<p>The Beige Book differs from Twitter in numerous ways; </p>
+
+<ul>
+<li>Not everyone has the freedom to participate,</li>
+<li>The data points are not socially linked,</li>
+<li>Users cannot respond to one another directly. </li>
+</ul>
+
+<p>For our purposes, however, the most important difference is that the Beige Book contains paragraphs of information per document, rather than being a collection of single sentences, like Twitter.</p>
+
+<pre><code>## Warning: dependency &#39;Rcompression&#39; is not available
+</code></pre>
+
 <pre><code>## Loading required package: RCurl
 ## Loading required package: bitops
-</code></pre>
-
-<pre><code>## Error: trying to use CRAN without setting a mirror
-</code></pre>
-
-<pre><code>## Loading required package: gplots
+## Loading required package: gplots
 ## KernSmooth 2.23 loaded
 ## Copyright M. P. Wand 1997-2009
 ## 
@@ -213,7 +227,12 @@ hljs.initHighlightingOnLoad();
 ## Loading required package: ROAuth
 ## Loading required package: digest
 ## Loading required package: rjson
-## Loading required package: tm
+</code></pre>
+
+<pre><code>## Warning: dependencies &#39;Rcampdf&#39;, &#39;Rgraphviz&#39;, &#39;Rpoppler&#39; are not available
+</code></pre>
+
+<pre><code>## Loading required package: tm
 </code></pre>
 
 <pre><code>## $`https://raw2.github.com/SocialMediaMininginR/sentiment_function/master/sentiment.R`

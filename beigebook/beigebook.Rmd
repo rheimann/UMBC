@@ -18,15 +18,21 @@ The Beige Book differs from Twitter in numerous ways;
 
 For our purposes, however, the most important difference is that the Beige Book contains paragraphs of information per document, rather than being a collection of single sentences, like Twitter.
 
-```{r echo=FALSE}
+```{r echo=FALSE, background=TRUE,results='hide'}
 # load required packages 
+install.packages("RCurl", dependencies=TRUE, repos="http://cran.us.r-project.org")
 require(RCurl)
-install.packages("gplots")
+install.packages("gplots", dependencies=TRUE, repos="http://cran.us.r-project.org")
 require(gplots)
+install.packages("SnowballC", dependencies=TRUE, repos="http://cran.us.r-project.org")
 require(SnowballC)
+install.packages("RColorBrewer", dependencies=TRUE, repos="http://cran.us.r-project.org")
 require(RColorBrewer)
+install.packages("ggplot2", dependencies=TRUE, repos="http://cran.us.r-project.org")
 require(ggplot2)
+install.packages("twitteR", dependencies=TRUE, repos="http://cran.us.r-project.org")
 require(twitteR)
+install.packages("tm", dependencies=TRUE, repos="http://cran.us.r-project.org")
 require(tm)
 ```
 
@@ -50,14 +56,14 @@ https_function("https://raw2.github.com/SocialMediaMininginR/sentiment_function/
 # Next, we load our lexicons directly from Github:
 # Download positive lexicons from Social Media Mining Github account
 
-download.file("https://raw.github.com/SocialMediaMininginR/pos_words/master/positive-words.txt", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/pos_words.txt", method = "curl")
-download.file("https://raw.github.com/SocialMediaMininginR/pos_words/master/LoughranMcDonald_pos.csv", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/LoughranMcDonald_pos.txt", method = "curl")
+download.file("https://raw.github.com/SocialMediaMininginR/pos_words/master/positive-words.txt", destfile = "/Users/heimannrichard/Documents/github/UMBC/beigebook/casestudy1/pos_words.txt", method = "curl")
+download.file("https://raw.github.com/SocialMediaMininginR/pos_words/master/LoughranMcDonald_pos.csv", destfile = "/Users/heimannrichard/Documents/github/UMBC/beigebook/casestudy1/LoughranMcDonald_pos.txt", method = "curl")
 
 # import positive lexicons from your local directory defined in earlier step
-pos <- scan(file.path("/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1", 'pos_words.txt'), what = 'character', comment.char = ';')
+pos <- scan(file.path("/Users/heimannrichard/Documents/github/UMBC/beigebook/casestudy1", 'pos_words.txt'), what = 'character', comment.char = ';')
 
 # import financial positive lexicon from your local directory defined in earlier step
-pos_finance <- scan(file.path("/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1", 'LoughranMcDonald_pos.txt'), 
+pos_finance <- scan(file.path("/Users/heimannrichard/Documents/github/UMBC/beigebook/casestudy1", 'LoughranMcDonald_pos.txt'), 
                    what = 'character', comment.char = ';')
 
 # combine both files into one
@@ -65,20 +71,20 @@ pos_all <- c(pos, pos_finance)
 
 # Download negative lexicons from Social Media Mining Github account
 
-download.file("https://raw2.github.com/SocialMediaMininginR/neg_words/master/negative-words.txt", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/neg_words.txt", method = "curl")
-download.file("https://raw.github.com/SocialMediaMininginR/neg_words/master/LoughranMcDonald_neg.csv", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/LoughranMcDonald_neg.txt", method = "curl")
+download.file("https://raw2.github.com/SocialMediaMininginR/neg_words/master/negative-words.txt", destfile = "/Users/heimannrichard/Documents/github/UMBC/beigebook/casestudy1/neg_words.txt", method = "curl")
+download.file("https://raw.github.com/SocialMediaMininginR/neg_words/master/LoughranMcDonald_neg.csv", destfile = "/Users/heimannrichard/Documents/github/UMBC/beigebook/casestudy1/LoughranMcDonald_neg.txt", method = "curl")
 
 # import negative lexicons from your local directory defined in earlier step
-neg <- scan(file.path("/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1", 'neg_words.txt'), what = 'character', comment.char = ';')
+neg <- scan(file.path("/Users/heimannrichard/Documents/github/UMBC/beigebook/casestudy1", 'neg_words.txt'), what = 'character', comment.char = ';')
 
 # import financial negative lexicon from your local directory defined in earlier step
-neg_finance <- scan(file.path("/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1", 'LoughranMcDonald_neg.txt'), 
+neg_finance <- scan(file.path("/Users/heimannrichard/Documents/github/UMBC/beigebook/casestudy1", 'LoughranMcDonald_neg.txt'), 
                    what = 'character', comment.char = ';')
 
 # combine both files into one
 neg_all <- c(neg, neg_finance)
 
-download.file("https://raw.github.com/SocialMediaMininginR/beigebook/master/bb_full.csv", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/BB.csv", method = "curl")
+download.file("https://raw.github.com/SocialMediaMininginR/beigebook/master/bb_full.csv", destfile = "/Users/heimannrichard/Documents/github/UMBC/beigebook/casestudy1/BB.csv", method = "curl")
 ```
 
 ```{r}

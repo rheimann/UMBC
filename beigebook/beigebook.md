@@ -5,17 +5,27 @@
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages and allows both content as well as the output of any embedded R code chunks within a document. 
 
+The Beige Book (http://www.federalreserve.gov/monetarypolicy/beigebook), more formally called the Summary of Commentary on Current Economic Conditions, is a report published by the United States (US) Federal Research Board (FRB) eight times a year. The report is published by each of the Federal Reserve bank districts ahead of the Federal Open Market committee meeting, and is designed to reflect economic conditions. Despite being a report published by the US FRB the content is rather anecdotal. The report interviews key business contacts, economists, market experts, and others to get their opinion about the economy.
+
+The Beige Book has been in publication since 1985 and is now published online. The data used in this book can be found on GitHub (https://github.com/SocialMediaMininginR/ beigebook), as can the Python code for all the scraping and parsing. An example from the Beige Book (October 2013) full report is below and should give you some idea about the nature of the content. The full report is an aggregated view from the twelve Federal Reserve bank districts.
+￼￼￼￼
+*Beige Book (October 2013): Consumer spending grew modestly in most Districts. Auto sales continued to be strong, particularly in the New York District where they were said to be increasingly robust. In contrast, Chicago, Kansas City, and Dallas indicated slower growth in auto sales in September.*
+
+The Beige Book differs from Twitter in numerous ways; 
+* Not everyone has the freedom to participate,
+* The data points are not socially linked,
+* Users cannot respond to one another directly. 
+
+For our purposes, however, the most important difference is that the Beige Book contains paragraphs of information per document, rather than being a collection of single sentences, like Twitter.
+
+
+```
+## Warning: dependency 'Rcompression' is not available
+```
 
 ```
 ## Loading required package: RCurl
 ## Loading required package: bitops
-```
-
-```
-## Error: trying to use CRAN without setting a mirror
-```
-
-```
 ## Loading required package: gplots
 ## KernSmooth 2.23 loaded
 ## Copyright M. P. Wand 1997-2009
@@ -33,6 +43,13 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 ## Loading required package: ROAuth
 ## Loading required package: digest
 ## Loading required package: rjson
+```
+
+```
+## Warning: dependencies 'Rcampdf', 'Rgraphviz', 'Rpoppler' are not available
+```
+
+```
 ## Loading required package: tm
 ```
 
