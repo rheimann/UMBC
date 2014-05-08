@@ -1,0 +1,401 @@
+# GES 673 ESDA with Flesch Kincaid Index using Twitter #
+## Using Twitter to Analyze Linguistic Standards in the US ##
+### by Richard Heimann ###
+========================================================
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages and allows both content as well as the output of any embedded R code chunks within a document. 
+
+Big social data is big data driven by a social aspect, and ultimately analyzes data that could serve directly, as or as a proxy, for other more substantive variables. The Flesch-Kincaid index (http://en.wikipedia.org/wiki/Flesch–Kincaid_readability_test), which you may all be familiar with as a consequence of using Microsoft Word, has for some time provided the readability index to documents. Flesch-Kincaid index in a manner measures linguistic standard. A sizable amount of research suggests that how we read/write/speak relates to our ability to learn. Understanding regional variation of linguistic standard over space and neighborhood structure and interaction of effects of linguistic standard is therefore a useful direction of research. 
+
+As discussed throughout the class our first step, had this been your own analysis is to write our your research question in both theoretical and operational terms. This is important. 
+
+The Readability Ease Index is the average sentence length weighted then subtracted from the average number of syllables per word. The output generally ranges from 0 - 100. To provide examples, the Reader's Digest magazine has a readability index of about 65, Time magazine scores about 52, an average 6th grade student (age 11) has written assignments at a readability score of 60–70, and the Harvard Law Review has a general readability score in the low 30s.
+ 
+The highest (easiest) readability score possible is around 120 (meaning every sentence consists of only two one-syllable words). The score does not have a theoretical lower bound. It is possible to make the score as low as you want by arbitrarily including words with many syllables. This could easily happen on Twitter: A tweet where LOL (laughing out loud) is repeated to the max character limit of 140 would possess subsequent indices well below 0. Therefore laughing out loud to an arbirarily low score is possible and should be considered an error in the measurement apparatus. 
+
+The following sentence, for example, taken as a reading passage unto itself, has a readability score of about 33. The sentence, "The Australian platypus is seemingly a hybrid of a mammal and reptilian creature" is a 24.4, as it has 26 syllables and 13 words. One particularly long sentence about sharks in chapter 64 of Moby-Dick has a readability score of -146.77. The Guardian used the Flesch-Kincaid index to track the reading level of every State of the Union address and noted how the linguist standard of the presidential address has steadily declined. http://www.theguardian.com/world/interactive/2013/feb/12/state-of-the-union-reading-level
+
+The index is inversely related to its linguistic sophistication. A high score is easier to read or, put differently, poorly written. An example of a low score or a tweet written with high sophistication [Table 1] is as follows: "This gas situation is absolutely ridiculous.” It was written at an 11th grade level and has a mean centered value well below zero. It is parsimonious and more dense with syllables on average that other tweets. The location of the Tweet is Mahwah NJ, located about 20 miles outside of New York City (NYC).
+
+<a href="https://www.flickr.com/photos/ronbumquist/13855743053" title="tbl1 by Richard Heimann, on Flickr"><img src="https://farm8.staticflickr.com/7157/13855743053_2cde0b741d.jpg" width="500" height="359" alt="tbl1"></a>
+
+The tweet [Table 2] “down here in beach bout to shut this down wit & feeling the vibe s” is written at a 4th grade level and has a mean centered value well above zero. This is an example of a high score, or a Tweet written with low sophistication. It has but one non-monosyllable word. The location of the tweet is Myrtle Beach, SC.
+
+<a href="https://www.flickr.com/photos/ronbumquist/13855742733" title="tbl2 by Richard Heimann, on Flickr"><img src="https://farm8.staticflickr.com/7224/13855742733_f60385831c.jpg" width="500" height="358" alt="tbl2"></a>
+
+The data was collected using the R package, twitteR (random pushes from the Twitter public timeline). The temporal range of collection began on 2012-10-23 and concluded 2012-11-06 (1 temporal bin, 2 weeks). The spatial extent of the data was the US where all data collected from the step below was clipped to the US. The original sample was 110,737 observations, 418,085 words, and 1,446,494 characters without stop words (519,974 & 2,326,500 with stop words). During data processing all hashtags were removed, as well as URLs. The data was clipped (to eliminate irregular values due to idiocyrisies of Twitter and the FK Index) at the tails of the distribution (0-100) and mean centered to aid in interpretation. The final dataset was a pruned sample 47,690 observations which was aggregated into US 3-digit zip codes and US counties. 
+
+Methods used include Local Indicator of Spatial Autocorrelation (Moran’s I) with LISA Classifications of High-High (HH), Low-Low (LL), High Low (HL), Low-High (LH) and spatial weights of k-nearest neighbor (k=40). By mean centering the data (that is, subtracting the global mean from each region), we can quickly identify deviation from the global mean. The Mid-Atlantic, Mountain, New England, and Pacific are all below the global mean (remember, writing with a higher standard), whereas East North Central, East South Central, Southeast, West North Central, and West South Central are all above (lower standard). You can also quickly see that the Pacific and the West South Central regions deviate most in their respective direction from the global mean.
+
+<a href="https://www.flickr.com/photos/ronbumquist/13856080704" title="tbl3 by Richard Heimann, on Flickr"><img src="https://farm3.staticflickr.com/2922/13856080704_b59dd6b113.jpg" width="500" height="449" alt="tbl3"></a>
+
+Another way of exploring [Graph 1] the data is box plots by region, with underlying scatter plots. We see much of the same information captured by the summary statistics, but the addition of the jitter allows us to get a sense of the distribution.
+
+<a href="https://www.flickr.com/photos/ronbumquist/13856080984" title="graph1 by Richard Heimann, on Flickr"><img src="https://farm3.staticflickr.com/2838/13856080984_aecd337e82.jpg" width="500" height="255" alt="graph1"></a>
+
+The map [1] merely shows the post-processed data after thresholding. Notice that even with just about 48,000 observations, the pattern recognition is difficult due in part to coincident points in space and perhaps supporting evidence for quantitative methods of pattern recognition and discovery.
+
+<a href="https://www.flickr.com/photos/ronbumquist/13855707305" title="map1 by Richard Heimann, on Flickr"><img src="https://farm4.staticflickr.com/3726/13855707305_9f41b0a462.jpg" width="500" height="253" alt="map1"></a>
+
+Using the Moran’s I Statistic for spatial autocorrelation, and Local Indicators of Spatial Autocorrelation (LISA) for classification, we can examine both spatial dependency and spatial heterogeneity. Notice the large spatial clusters representative of spatial dependency in the north and south, with smaller regimes in the northeast and west. These are high values surrounded by high values in the southwest and in the heartland. Also noticeable are the low indices surrounded by other low indices in the north, centered around Montana and on the coasts, namely the NYC Metropolitan area and San Jose/SF area. In our EDA/ESDA lectures recall we examined maps often in a two map comparison. Here we are comparing regions. The Global Moran's I could have been used in this fashion - perhaps comparing regions to other regions. But, the LISA does this in a much more localized fashion and does so with greater efficiency. 
+
+<a href="https://www.flickr.com/photos/ronbumquist/13856080444" title="map2 by Richard Heimann, on Flickr"><img src="https://farm8.staticflickr.com/7099/13856080444_c205e2c97b.jpg" width="500" height="260" alt="map2"></a>
+
+<a href="https://www.flickr.com/photos/ronbumquist/13856080834" title="graph2 by Richard Heimann, on Flickr"><img src="https://farm4.staticflickr.com/3709/13856080834_580419aaa6.jpg" width="500" height="121" alt="graph2"></a>
+
+
+There are more localized relationships not clear from this map. Recall from lecture our discussions on smooth and rough pattern detection. Where we concluded that data was the sum of rough and smooth - or, data = rough + smooth. In addition to the smooth quality of the analysis as noted by high values surrounded by high values, and low values surrounded by low values, there are also some interesting rough qualities characteristic of spatial outliers or high values surrounded by low values and low values surrounded by high values. For example, Columbus OH, Ithaca NY, and Gassaway WV are all low values surrounded by high values -- meaning these cities write at a more sophisticated level than their neighbors and meet statistical significance.
+
+By performing a spatial inner join (very common GIS task of finding points in polygons) with major cities -- in this case, cities with more than 300,000 people -- and the LISA classifications, we can identify large cities and their sophistication in crafting Tweets. The following are the only cities that meet that criteria. This is a practical example of the merging of traditional GIS, which has a great deal of efficacy with newer techniques to produce more poignant insight. 
+
+El Paso, Oklahoma City, Omaha, Detroit, and Memphis all have statistically significant high values surrounded by high values (HH). NYC and San Jose are low values surrounded by low values (LL). Sacramento is a low value surrounded by otherwise high values (LH) and Wichita, Kansas City, Tulsa, and Nashville are all high flesch-kincaid indices surrounded by low flesch-kincaid indices (HL). These indices are inversely related with writing ability and linguistic standards; high values are low writing ability and vice versa. One might conclude, among other things, that NYC and San Jose write with high linguistic standards.
+
+The LISA categories are statistically significant with a pseudo p-value < 0.05. Pseudo p-values are a computational approach to inference and prove to be a nice data reduction technique. Our original dataset of 3-digit zip codes is reduced from 862 observations to just 259, where all other observations are not statistically significant in the patterning of the kincaid index, or just 30 percent of the original dataset.
+
+For more on this topic see my Github and Slideshare pages.
+[Github:](https://github.com/rheimann/UMBC)
+[Slideshare:](http://www.slideshare.net/rheimann04/big-social-data-the-spatial-turn-in-big-data)
+
+### 1. Upon reading this material what would your research question be? Don't forget to write out the question in both theoretical and operational terms. Also, not which phase of the methodology this falls within. This is a three part question worth three points, one point for each answer. 
+
+### [1]
+### [2]
+### [3]
+
+### 2. Following the writting out of our research question in theorectical and operational terms we now consider the design (Step #2) and we chose our variables and consider thier level of measurement. The design has many important considerations including the items below. The question is, how was our data collected? Was the data collection primary or secondary collection AND what type of sample was it (random, stratified, accidental, or clustered)? This is a two part question worth two points, one point for each answer. 
+
+[Random:](http://en.wikipedia.org/wiki/Simple_random_sampling)
+[Stratified:](http://en.wikipedia.org/wiki/Stratified_sampling)
+[Clustered:](http://en.wikipedia.org/wiki/Cluster_sampling)
+[Accidental:](http://en.wikipedia.org/wiki/Sampling_(statistics)#Accidental_sampling)
+
+
+### Define the Design:
+* Will this be a primary data analysis - that is, will you collect your own data?
+a. If so, will you sample? If so, how? i.e. random, stratified, or clustered.
+b. What are the confounding variables, if any?
+c. Was the data collected in a repeated measures or single measurement way?
+d. Will the data be aggregated and if so, how? To what areal unit? Does this match the research question?
+e. Will you include a quasi-experimental design?
+
+* Will this be a secondary data analysis - that is, will the data be collected by another effort?
+a. If so, what was the sample? Who collected the data? What was the source? Why was it collected?
+b. Is the data a repeated measures or single measurement?
+c. What is the level of aggregation, if any?
+d. Will you include a quasi-experimental design?
+
+### [4]
+### [5]
+
+## 3. We learned that the FK Index can be spoofed with tricky data/tweets. For example, a tweet where LOL (laughing out loud) is repeated to the max character limit of 140 would produce subsequent measurements well below 0. Therefore laughing out loud to an arbirarily low score is possible and should be considered an error in the measurement apparatus. In Step 4 we discuss how to clean data and create new variables. In the example above how was the error mediated in this case? What other type of errors exist (this is due to measurement? Is there another way to mediate this type of error? This is a three part question worth three points, one point for each answer. 
+
+### [6]
+### [7]
+### [8]
+
+### 4. As we have discussed in previous lectures, variables are high level abstractions and are composed of attributes - all of which need to be measured. To establish relationships between variables and among attributes researchers/practitioners must observe the variables and record observations and various attributes. The process of measuring a variable and its attributes requires a set of categories called a scale of measurement.  In this example: 
+
+* What is the variable of interest, we might call it our dependent variable? [9]
+* What is its attributes [10]
+* What is its level of measurement? [11] 
+
+### This is a three part question worth 1.5 points, .5 points for each answer. 
+
+### 5. Given the result of this analysis what would you suggest as the next step? This is a one part question worth .5 points - this could be as little as one sentence but could require more detail. 
+
+### [12]
+
+### 10 total points for this lab.
+
+```{r echo=FALSE}
+#### ESDA Example Flesch Kincaid Index using Twitter #### 
+install.packages("spdep", dependencies=TRUE, repos="http://cran.us.r-project.org")
+require(spdep)
+install.packages("maptools", repos="http://cran.us.r-project.org")
+require(maptools)
+install.packages("RColorBrewer", repos="http://cran.us.r-project.org")
+require(RColorBrewer)
+install.packages("classInt", repos="http://cran.us.r-project.org")
+require(classInt)
+install.packages("maptools", repos="http://cran.us.r-project.org")
+require(maptools)
+install.packages("spdep", repos="http://cran.us.r-project.org")
+require(spdep)
+```
+
+Load data:
+
+```{r}
+# load county shapefile 
+geocnty.fk <- readShapePoly("/Users/heimannrichard/Google Drive/GIS Data/flesch_kincaid/TwitterReadingCNTYJoin.shp", 
+                        proj4string=CRS('+proj=longlat +datum=NAD83'))
+```
+
+```{r}
+# load 3 digit zip shapefile 
+geozip.fk <- readShapePoly("/Users/heimannrichard/Google Drive/GIS Data/TwitterReading3ZIPJoin.shp", 
+                        proj4string=CRS('+proj=longlat +datum=NAD83'))
+```
+
+```{r}
+# histogram MEANflesch (mean center FleschKincaid) on geocnty
+hist(geocnty.fk$MEANflesch)
+hist(geocnty.fk$MEANflecMC)
+# histogram MEANflesch (mean center FleschKincaid) on geozip
+hist(geozip.fk$MEANflesch)
+hist(geozip.fk$MEANflecMC)
+# notice mean centering doesn't change the distribution as thresholding# , clipping or windsoring might. 
+```
+
+```{r, fig.height=12, fig.width=14}
+# map of FK at the county level
+spplot(geocnty.fk@data$MEANflesch, at=quantile(geocnty.fk@data$MEANflesch, 
+      p=c(0,.25, .5, .75, 1), na.rm=TRUE), 
+      col.regions=brewer.pal(5, "Reds"), 
+      main="County Level Flesch Kincaid", sub="Flesch Kincaid Index using Twitter")
+```
+
+```{r, fig.height=12, fig.width=14}
+# map of FK at the 3-digit zip level
+spplot(geozip.fk@data$MEANflesch, at=quantile(geozip.fk@data$MEANflesch, 
+      p=c(0,.25, .5, .75, 1), na.rm=TRUE), 
+      col.regions=brewer.pal(5, "Reds"), 
+      main="3 digit Zipcode Level Flesch Kincaid", sub="Flesch Kincaid Index using Twitter")
+
+# pattern detection is difficult with data of this areal unit size and # spatial extent. 
+```
+
+```{r}
+# another way to map FK at the 3-digit zip level
+br.palette <- colorRampPalette(c("blue", "pink"), space = "rgb")
+pal <- br.palette(n=5)
+var <- geozip.fk$MEANflesch
+classes_fx <- classIntervals(var, n=5, style="fixed", fixedBreaks=c(0, 10, 25, 50, 75, 100), rtimes = 1)
+cols <- findColours(classes_fx, pal)
+
+par(mar=rep(0,4))
+plot(geozip.fk,col=pal,border=NA)
+legend(x="bottom", cex=.7, fill=attr(cols,"palette"), bty="n",legend=names(attr(cols, "table")),
+       title="3 digit Zipcode Level Flesch Kincaid", ncol=5)
+```
+
+## Pattern detection is difficult still but abit easier with zip codes due to the average size of the areal unit increasing. This increase in scale makes visual interpretation easier but may also have impact on our analysis, as discussed in lecture. The averaging or smoothing of the data tends to increase the effect or the size of the relationship akin to MAUP. Our statistics may not be invariant to this "scaling up" but we can keep that in mind for now and evaulate the difference later. 
+
+
+```{r}
+# nb.cntyfk <- poly2nb(geocnty.fk, queen=T)
+nb.cntyfk <- read.gwt2nb("/Users/heimannrichard/Google Drive/GIS Data/flesch_kincaid/TwitterReadingCNTYJoinknn40.gwt",region.id=geocnty.fk@data$OID)
+summary(nb.cntyfk)
+print(is.symmetric.nb(nb.cntyfk))
+
+
+# nb.zipfk <- poly2nb(geozip.fk, queen=T)
+nb.zipfk <- read.gwt2nb("/Users/heimannrichard/Google Drive/GIS Data/TwitterReading3ZIPJoinknn40.gwt",region.id=geozip.fk@data$POLY_ID)
+summary(nb.zipfk)
+print(is.symmetric.nb(nb.zipfk))
+```
+
+```{r fig.height=12, fig.width=12}
+sw.cntyfk <- nb2listw(neighbours=nb.cntyfk, style="B", zero.policy=TRUE)
+plot(geocnty.fk)
+plot(sw.cntyfk, coordinates(geocnty.fk), add=T, col="red")
+
+sw.zipfk <- nb2listw(neighbours=nb.zipfk, style="B", zero.policy=TRUE)
+plot(geozip.fk)
+plot(sw.zipfk, coordinates(geozip.fk), add=T, col="red")
+```
+
+```{r, fig.height=12, fig.width=14}
+moran.mc(x=geocnty.fk@data$MEANflesch, listw=sw.cntyfk, nsim=499, zero.policy=TRUE)
+
+# notice the observed rank of 484 meaning that 15 simulated values were more extreme than the observed. What is the p-value here?
+
+moran.mc(x=geozip.fk@data$MEANflesch, listw=sw.zipfk, nsim=499, zero.policy=TRUE)
+
+# notice the observed rank of 500 meaning that 0 simulated values were more extreme than the observed. What is the p-value here?
+```
+
+## Notice the observed rank of 500 meaning that zero simulated value was more extreme than the observed. What is the p-value here? What can you conclude about the two Moran's I between county and zip-code? 
+
+```{r fig.height=12, fig.width=12}
+par(mar=c(4,4,1.5,0.5)) 
+moran.plot(geocnty.fk@data$MEANflesch, listw=sw.cntyfk, zero.policy=T, pch=16, col="black",cex=.5, quiet=F, labels=as.character(geocnty.fk$STATE_NAME),xlab="FK Index", ylab="FK Index (Spatial Lag)", main="Moran Scatterplot")
+```
+
+```{r}
+# manually make a moran plot standarize variables
+# save to a new column
+geocnty.fk@data$sFKmean <- scale(geocnty.fk@data$MEANflesch) 
+hist(geocnty.fk@data$sFKmean)
+summary(geocnty.fk@data$sFKmean)
+summary(geocnty.fk@data$lag_sFKmean)
+# create a lagged variable
+geocnty.fk@data$lag_sFKmean <- lag.listw(sw.cntyfk, geocnty.fk@data$sFKmean)
+hist(geocnty.fk@data$lag_sFKmean)
+```
+
+```{r}
+# manually make a moran plot standarize variables
+# save to a new column
+geozip.fk@data$sFKmean <- scale(geozip.fk@data$MEANflesch) 
+
+# create a lagged variable
+geozip.fk@data$lag_sFKmean <- lag.listw(sw.zipfk, geozip.fk@data$sFKmean)
+hist(geozip.fk@data$lag_sFKmean)
+summary(geozip.fk@data$sFKmean)
+summary(geozip.fk@data$lag_sFKmean)
+```
+
+
+```{r}
+plot(x = geocnty.fk@data$sFKmean, y = geocnty.fk@data$lag_sFKmean, main = " Moran Scatterplot FK")
+abline(h = 0, v = 0)
+abline(lm(geocnty.fk@data$lag_sFKmean ~ geocnty.fk@data$sFKmean), lty = 3, lwd = 4, col = "red")
+
+# check out the outliers click on one or two and then hit escape (or
+# click finish)
+# identify(geocnty.fk$sFKmean, geocnty.fk$lag_sFKmean, geocnty.fk$STATE_NAME, cex = 0.8)
+```
+
+```{r}
+plot(x = geozip.fk@data$sFKmean, y = geozip.fk@data$lag_sFKmean, main = " Moran Scatterplot FK")
+abline(h = 0, v = 0)
+abline(lm(geozip.fk@data$lag_sFKmean ~ geozip.fk@data$sFKmean), lty = 3, lwd = 4, col = "red")
+
+# check out the outliers click on one or two and then hit escape (or
+# click finish)
+# identify(geozip.fk$sFKmean, geozip.fk$lag_sFKmean, geozip.fk$STATE, cex = 0.8)
+```
+
+## Notice that the relationship is stronger at the zip-code level. Why do you think this is the case? Is it larger enough to alter our research question or interpretation of the results?
+
+
+```{r, fig.height=12, fig.width=14}
+plot(sp.correlogram(neighbours=nb.cntyfk, var=geocnty.fk@data$MEANflesch, 
+      order=6, method="I", style="B", zero.policy=TRUE))
+
+plot(sp.correlogram(neighbours=nb.zipfk, var=geozip.fk@data$MEANflesch, 
+      order=6, method="I", style="B", zero.policy=TRUE))
+
+```
+
+## What is the best interpretation of the correlogram for each - county and zip-code? Do you think an analysis for zip-code is best (hint: error bars)?
+
+```{r}
+local_cnty.mi <- localmoran(x=geocnty.fk@data$MEANflesch, listw=sw.cntyfk)
+# p.adjust.method is appropriate for big data due to multiple hypothesis testing
+
+local_zip.mi <- localmoran(x=geozip.fk@data$MEANflesch, listw=sw.zipfk)
+# p.adjust.method is appropriate for big data due to multiple hypothesis testing
+```
+
+```{r}
+class(local_cnty.mi)
+colnames(local_cnty.mi)
+class(local_zip.mi)
+colnames(local_zip.mi)
+# summary stats Moran's I for both county and 3-digit zip code
+summary(local_cnty.mi)
+summary(local_zip.mi)
+```
+
+## What can you determine from five number summary of Ii for both county and zipcode? 
+
+```{r}
+geocnty.fk$lmi <- local_cnty.mi[, 1]
+geocnty.fk$lmi
+geocnty.fk$lmi.p <- local_cnty.mi[, 5]
+summary(geocnty.fk$lmi.p)
+summary(geocnty.fk$lmi)
+summary(geocnty.fk$lmi.p)
+# do we expect the p-value range from 0 to 1?
+##
+geozip.fk$lmi <- local_zip.mi[, 1]
+geozip.fk$lmi.p <- local_zip.mi[, 5]
+summary(geozip.fk$lmi)
+summary(geozip.fk$lmi.p)
+
+geocnty.fk@data$lmi.p.sig <- as.factor(ifelse(local_cnty.mi[, 5]<.001, "Sig p<.001", ifelse(local_cnty.mi[, 5]<.05,"Sig p<.05", "NS" )))
+##
+geozip.fk@data$lmi.p.sig <- as.factor(ifelse(local_zip.mi[, 5]<.001, "Sig p<.001", ifelse(local_zip.mi[, 5]<.05,"Sig p<.05", "NS" )))
+```
+
+```{r, fig.height=12, fig.width=14}
+spplot(geocnty.fk, "lmi", at=summary(geocnty.fk$lmi), col.regions=brewer.pal(5, "RdBu"), main="Local Moran's I")
+##
+spplot(geozip.fk, "lmi", at=summary(geozip.fk$lmi), col.regions=brewer.pal(5, "RdBu"), main="Local Moran's I")
+```
+
+```{r, fig.height=12, fig.width=14}
+spplot(geocnty.fk, "lmi.p.sig", col.regions=c("white", "#E6550D","#FDAE6B"))
+##
+spplot(geozip.fk, "lmi.p.sig", col.regions=c("white", "#E6550D","#FDAE6B"))
+```
+
+```{r}
+# identify the moran plot quadrant for each observation
+geocnty.fk@data$quad_sig <- NA
+geocnty.fk@data[(geocnty.fk$sFKmean > 0 & geocnty.fk$lag_sFKmean > 0) & (local_cnty.mi[, 5] <= 0.05), "quad_sig"] <- 1
+geocnty.fk@data[(geocnty.fk$sFKmean < 0 & geocnty.fk$lag_sFKmean > 0) & (local_cnty.mi[, 5] <= 0.05), "quad_sig"] <- 2
+geocnty.fk@data[(geocnty.fk$sFKmean < 0 & geocnty.fk$lag_sFKmean > 0) & (local_cnty.mi[, 5] <= 0.05), "quad_sig"] <- 3
+geocnty.fk@data[(geocnty.fk$sFKmean > 0 & geocnty.fk$lag_sFKmean < 0) & (local_cnty.mi[, 5] <= 0.05), "quad_sig"] <- 4
+geocnty.fk@data[(local_cnty.mi[, 5] > 0.05), "quad_sig"] <- 5
+
+summary(geocnty.fk@data$quad_sig)
+hist(geocnty.fk@data$quad_sig)
+hist(geocnty.fk@data$lmi.p)
+```
+
+```{r}
+# identify the moran plot quadrant for each observation
+geozip.fk@data$quad_sig <- NA
+geozip.fk@data[(geozip.fk$sFKmean > 0 & geozip.fk$lag_sFKmean > 0) & (local_zip.mi[, 5] <= 0.05), "quad_sig"] <- 1
+geozip.fk@data[(geozip.fk$sFKmean < 0 & geozip.fk$lag_sFKmean > 0) & (local_zip.mi[, 5] <= 0.05), "quad_sig"] <- 2
+geozip.fk@data[(geozip.fk$sFKmean < 0 & geozip.fk$lag_sFKmean > 0) & (local_zip.mi[, 5] <= 0.05), "quad_sig"] <- 3
+geozip.fk@data[(geozip.fk$sFKmean > 0 & geozip.fk$lag_sFKmean < 0) & (local_zip.mi[, 5] <= 0.05), "quad_sig"] <- 4
+geozip.fk@data[(local_zip.mi[, 5] > 0.05), "quad_sig"] <- 5
+
+summary(geozip.fk@data$quad_sig)
+hist(geozip.fk@data$quad_sig)
+hist(geozip.fk@data$lmi.p)
+```
+
+```{r}
+# Set the breaks for the thematic map classes
+breaks <- seq(1, 5, 1)
+
+# Set the corresponding labels for the thematic map classes
+labels <- c("high-High", "low-Low", "High-Low", "Low-High", "Not Signif.")
+
+# see ?findInterval - This is necessary for making a map
+np <- findInterval(geocnty.fk$quad_sig, breaks)
+
+# Assign colors to each map class
+colors <- c("red", "blue", "lightpink", "skyblue2", "white")
+#colors[np] manually sets the color for each county
+plot(geocnty.fk, col = colors[np])  
+mtext("Local Moran's I", cex = 1.5, side = 3, line = 1)
+legend("topleft", legend = labels, fill = colors, bty = "n")
+```
+
+<a href="https://www.flickr.com/photos/ronbumquist/13858621594" title="county_lisa by Richard Heimann, on Flickr"><img src="https://farm3.staticflickr.com/2857/13858621594_34841208e5.jpg" width="500" height="231" alt="county_lisa"></a>
+
+```{r}
+# Set the breaks for the thematic map classes
+breaks2 <- seq(1, 5, 1)
+
+# Set the corresponding labels for the thematic map classes
+labels2 <- c("high-High", "low-Low", "High-Low", "Low-High", "Not Signif.")
+
+# see ?findInterval - This is necessary for making a map
+np2 <- findInterval(geozip.fk$quad_sig, breaks2)
+
+# Assign colors to each map class
+colors2 <- c("red", "blue", "lightpink", "skyblue2", "white")
+#colors[np] manually sets the color for each county
+plot(geozip.fk, col = colors2[np2])  
+mtext("Local Moran's I", cex = 1.5, side = 20, line = 1)
+legend("topleft", legend = labels, fill = colors, bty = "n")
+```
+
+<a href="https://www.flickr.com/photos/ronbumquist/13858281443" title="zipcode_lisa by Richard Heimann, on Flickr"><img src="https://farm3.staticflickr.com/2883/13858281443_251c68438b.jpg" width="500" height="229" alt="zipcode_lisa"></a>

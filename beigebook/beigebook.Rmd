@@ -1,0 +1,386 @@
+# Beige Book Sentiment Analysis
+## University of Maryland Baltimore Country GES673
+### By Richard Heimann
+========================================================
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages and allows both content as well as the output of any embedded R code chunks within a document. 
+
+The Beige Book (http://www.federalreserve.gov/monetarypolicy/beigebook), more formally called the Summary of Commentary on Current Economic Conditions, is a report published by the United States (US) Federal Research Board (FRB) eight times a year. The report is published by each of the Federal Reserve bank districts ahead of the Federal Open Market committee meeting, and is designed to reflect economic conditions. Despite being a report published by the US FRB the content is rather anecdotal. The report interviews key business contacts, economists, market experts, and others to get their opinion about the economy.
+
+The Beige Book has been in publication since 1985 and is now published online. The data used in this book can be found on GitHub (https://github.com/SocialMediaMininginR/ beigebook), as can the Python code for all the scraping and parsing. An example from the Beige Book (October 2013) full report is below and should give you some idea about the nature of the content. The full report is an aggregated view from the twelve Federal Reserve bank districts.
+￼￼￼￼
+*Beige Book (October 2013): Consumer spending grew modestly in most Districts. Auto sales continued to be strong, particularly in the New York District where they were said to be increasingly robust. In contrast, Chicago, Kansas City, and Dallas indicated slower growth in auto sales in September.*
+
+The Beige Book differs from Twitter in numerous ways; 
+* Not everyone has the freedom to participate,
+* The data points are not socially linked,
+* Users cannot respond to one another directly. 
+
+For our purposes, however, the most important difference is that the Beige Book contains paragraphs of information per document, rather than being a collection of single sentences, like Twitter.
+
+```{r echo=FALSE}
+# load required packages 
+require(RCurl)
+install.packages("gplots")
+require(gplots)
+require(SnowballC)
+require(RColorBrewer)
+require(ggplot2)
+require(twitteR)
+require(tm)
+```
+
+```{r echo=FALSE}
+# note: you will substitute your directory for destination file locations
+
+# Run the following code - (Breyal)
+https_function <- function(url, ...) {
+# load package
+# require(RCurl)
+  
+# parse and evaluate each .R script
+sapply(c(url, ...), function(u) {
+    eval(parse(text = getURL(u, followlocation = TRUE, cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))), envir = .GlobalEnv)
+  })
+}
+
+# Load sentiment function located https://github.com/SocialMediaMininginR
+https_function("https://raw2.github.com/SocialMediaMininginR/sentiment_function/master/sentiment.R")
+
+# Next, we load our lexicons directly from Github:
+# Download positive lexicons from Social Media Mining Github account
+
+download.file("https://raw.github.com/SocialMediaMininginR/pos_words/master/positive-words.txt", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/pos_words.txt", method = "curl")
+download.file("https://raw.github.com/SocialMediaMininginR/pos_words/master/LoughranMcDonald_pos.csv", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/LoughranMcDonald_pos.txt", method = "curl")
+
+# import positive lexicons from your local directory defined in earlier step
+pos <- scan(file.path("/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1", 'pos_words.txt'), what = 'character', comment.char = ';')
+
+# import financial positive lexicon from your local directory defined in earlier step
+pos_finance <- scan(file.path("/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1", 'LoughranMcDonald_pos.txt'), 
+                   what = 'character', comment.char = ';')
+
+# combine both files into one
+pos_all <- c(pos, pos_finance)
+
+# Download negative lexicons from Social Media Mining Github account
+
+download.file("https://raw2.github.com/SocialMediaMininginR/neg_words/master/negative-words.txt", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/neg_words.txt", method = "curl")
+download.file("https://raw.github.com/SocialMediaMininginR/neg_words/master/LoughranMcDonald_neg.csv", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/LoughranMcDonald_neg.txt", method = "curl")
+
+# import negative lexicons from your local directory defined in earlier step
+neg <- scan(file.path("/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1", 'neg_words.txt'), what = 'character', comment.char = ';')
+
+# import financial negative lexicon from your local directory defined in earlier step
+neg_finance <- scan(file.path("/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1", 'LoughranMcDonald_neg.txt'), 
+                   what = 'character', comment.char = ';')
+
+# combine both files into one
+neg_all <- c(neg, neg_finance)
+
+download.file("https://raw.github.com/SocialMediaMininginR/beigebook/master/bb_full.csv", destfile = "/Users/heimannrichard/Google Drive/Spatial Analysis UMBC/RCode/casestudy1/BB.csv", method = "curl")
+```
+
+```{r}
+# read.csv() reads a file in table format and creates a data frame from it.
+BB <- read.csv("/Users/heimannrichard/Documents/github/beigebook/beigebookdata/BB_96_2013.csv")
+BB <- subset(BB, select = -X)
+```
+
+```{r}
+# str() compactly display the internal structure of an R object
+str(BB)
+```
+
+```{r}
+# reformat date field
+BB$Date <- as.Date( paste(BB$year, BB$month, BB$day, sep = "-" )  , format =   "%Y-%m-%d" )
+BB$Date <- strptime(as.character(BB$Date), "%Y-%m-%d")
+# colnames() retrieves column names of a matrix-like object.
+colnames(BB) <- c("location", "year", "month", "text", "date")
+```
+
+```{r echo=TRUE, message=FALSE}
+# gsub() substitutes character classes that do not give an output such as feed, backspace and tabspaces with a space ‘ ‘. 
+# gsub() substitutes numerical values with digits of one or greater with a space ‘ ‘. 
+BB$text <- gsub('[[:punct:]]', ' ', BB$text)  
+BB$text <- gsub('[[:cntrl:]]', ' ', BB$text)
+BB$text <- gsub('\\d+', ' ', BB$text)
+```
+
+```{r echo=TRUE, message=FALSE}
+# the standard stopwords are useful starting points but we may want to add corpus specific words 
+stnd.stopwords <- stopwords("SMART")
+# head() returns the first parts of a vector, matrix, table, data frame or function. 
+# tail() returns the first parts of a vector, matrix, table, data frame or function.
+head(stnd.stopwords)
+tail(stnd.stopwords)
+# length() gets or set the length of vectors
+length(stnd.stopwords)
+```
+
+```{r}
+# bb.stopwords is a combination of stnd.stopwords and our custom list.
+bb.stopwords<- c(stnd.stopwords, "district", "districts", "reported", "noted", "city", "cited",   
+                 "activity", "contacts", "chicago", "dallas", "kansas", "san", "richmond", "francisco",   
+                 "cleveland", "atlanta", "sales", "boston", "york", "philadelphia", "minneapolis", 
+                 "louis",	"services","year", "levels", " louis")
+length(bb.stopwords)
+```
+
+```{r}
+# pos.words is a combination of pos_all, which was quietly loaded and is combination of a generic and a domain specific lexicon and    # some words which are important to the beige book. 
+pos.words<- c(pos_all, "spend", "buy", "earn", "hike", "increase", "increases",   
+              "development", "expansion", "raise", "surge", "add", "added", "advanced", "advances", 	
+              "boom", "boosted", "boosting", "waxed", "upbeat", "surge")
+
+# neg.words is a combination of neg_all, which was quietly loaded and is combination of a generic and a domain specific lexicon and    # some words which are important to the beige book. 
+neg.words <- c(neg_all, "earn", "shortfall", "weak", "fell", "decreases", "decreases", 	
+              "decreased", "contraction", "cutback", "cuts", "drop", "shrinkage", "reduction", 	
+              "abated", "cautious", "caution", "damped", "waned", "undermine", "unfavorable", 	
+              "soft", "softening", "soften", "softer", "sluggish", "slowed", "slowdown", "slower", 	
+              "recession")
+```
+
+```{r}
+head(pos.words)
+head(neg.words)
+```
+
+```{r echo=TRUE, message=FALSE}
+# BB.keeps are the fields we wish to retain after running score.sentiment.
+BB.keeps <- BB[,c("location", "date", "year")]
+```
+
+```{r echo=TRUE, message=FALSE}
+# using our score.sentiment function on BB$text (text field) against pos.words and neg.words (lexicons).
+BB.score<- score.sentiment(BB$text, pos.words, neg.words)
+```
+
+```{r echo=TRUE, message=FALSE}
+# add back BB.keeps to BB.score.
+BB.sentiment <- cbind(BB.keeps, BB.score)
+```
+
+```{r}
+# colnames shows that we kept “text”, “date”, and “year” field as well as the # new column “score”
+colnames(BB.sentiment)
+```
+
+```{r}
+# calculate mean from raw score
+BB.sentiment$mean <- mean(BB.sentiment$score)
+# calculate sum and store it in BB.sum
+BB.sum <- BB.sentiment$score
+# center the data by subtracting BB.sum from BB.sentiment$mean
+BB.sentiment$centered <- BB.sum - BB.sentiment$mean
+# we can label observations above and below the centered values with 1 and code N/A values with 0.
+BB.sentiment$pos[BB.sentiment$centered>0] <- 1
+BB.sentiment$neg[BB.sentiment$centered<0] <- 1
+BB.sentiment$neg[is.na(BB.sentiment$neg)] <- 0
+BB.sentiment$pos[is.na(BB.sentiment$pos)] <- 0
+```
+
+```{r}
+# we can then sum the values
+sum(BB.sentiment$pos)
+sum(BB.sentiment$neg)
+```
+
+
+```{r fig.width=9, fig.height=8}
+# we can create a histogram of raw score and centered score to see the impact of mean centering
+BB.hist <- hist(BB.sentiment$score, main="Sentiment Histogram", xlab="Score", ylab="Frequency")
+BB.hist <- hist(BB.sentiment$centered, main="Sentiment Histogram", xlab="Score",ylab="Frequency")
+```
+
+```{r}
+# using the results from the function to score our documents we create a boxplot to   
+# examine the distribution of opinion relating to economic conditions 
+BB.boxplot<- ggplot(BB.sentiment, aes(x = BB.sentiment$year, 
+                                      y = BB.sentiment$centered, group = BB.sentiment$year)) + 
+geom_boxplot(aes(fill = "grey80"), outlier.colour = "black", outlier.shape = 16, outlier.size = 2) +
+  guides(fill=FALSE)
+# add labels to our boxplot using xlab
+BB.boxplot<- BB.boxplot + xlab("Year") + ylab("Sentiment (Centered)") +
+  ggtitle("Economic Sentiment - Beige Book (1996-2013)")
+# draw boxplot
+BB.boxplot
+```
+
+```{r}
+# this code can be used to add the recession bars shown below where xmin and xmax. 
+rect2001 <- data.frame (
+  xmin=2001, xmax=2002, ymin=-Inf, ymax=Inf)
+rect2007 <- data.frame (
+  xmin=2007, xmax=2009, ymin=-Inf, ymax=Inf)
+```
+
+```{r}
+# ggplot is an R package used for advanced plotting.
+BB.boxplot <- ggplot(BB.sentiment, aes(x=BB.sentiment$year, y=BB.sentiment$centered, group=BB.sentiment$year))
+BB.boxplot <- BB.boxplot + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2)
+BB.boxplot <- BB.boxplot + geom_rect(data=rect2001, aes(xmin=xmin, xmax=xmax, ymin=-Inf, ymax=+Inf), fill="pink", alpha=0.2, inherit.aes = FALSE)
+BB.boxplot <- BB.boxplot + geom_rect(data=rect2007, aes(xmin=xmin, xmax=xmax, ymin=-Inf, ymax=+Inf), fill='pink', alpha=0.2, inherit.aes = FALSE)
+BB.boxplot <- BB.boxplot + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("Economic Sentiment - Beige Book (1996-2013)")
+BB.boxplot 
+```
+
+```{r}
+bb.results <- data.frame()
+for (local in unique(BB.sentiment$location))
+{
+  tmp = subset(BB.sentiment, location==local)
+  count = nrow(tmp)
+  mean = mean(tmp$centered)
+  median = median(tmp$centered)
+  bb.results = rbind(bb.results, data.frame(local, count, mean, median))
+}
+bb.results
+```
+
+```{r}
+summary(BB.sentiment$score)
+summary(BB.sentiment$centered)
+```
+
+```{r}
+# apply a function to each cell in this case using ?mean, ?var, ?length
+tapply(BB.sentiment$score, BB.sentiment$location, mean)
+tapply(BB.sentiment$centered, BB.sentiment$location, mean)
+tapply(BB.sentiment$score, BB.sentiment$location, var)
+tapply(BB.sentiment$score, BB.sentiment$location, length)
+```
+
+```{r}
+# Return subsets of vectors, matrices or data frames which meet conditions.
+dallas <- subset(BB.sentiment, location=="Dallas")
+stlouis <- subset(BB.sentiment, location=="St. Louis")
+atlanta <- subset(BB.sentiment, location=="Atlanta")
+ny <- subset(BB.sentiment, location=="New York")
+richmond <- subset(BB.sentiment, location=="Richmond")
+sf <- subset(BB.sentiment, location=="San Francisco")
+kc <- subset(BB.sentiment, location=="Kansas City")
+minneapolis <- subset(BB.sentiment, location=="Minneapolis")
+chicago <- subset(BB.sentiment, location=="Chicago")
+boston <- subset(BB.sentiment, location=="Boston")
+cleveland <- subset(BB.sentiment, location=="Cleveland")
+phili <- subset(BB.sentiment, location=="Philadelphia")
+```
+
+
+```{r}
+# BB.boxplot.dallas 
+BB.boxplot.dallas <- ggplot(dallas, aes(x=dallas$year, y=dallas$centered, group=dallas$year))
+BB.boxplot.dallas <- BB.boxplot.dallas + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-70, 50)
+BB.boxplot.dallas <- BB.boxplot.dallas + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("dallas")
+# BB.boxplot.stlouis 
+BB.boxplot.stlouis <- ggplot(stlouis, aes(x=stlouis$year, y=stlouis$centered, group=stlouis$year))
+BB.boxplot.stlouis <- BB.boxplot.stlouis + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-50, 50)
+BB.boxplot.stlouis <- BB.boxplot.stlouis + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("stlouis")
+# BB.boxplot.atlanta 
+BB.boxplot.atlanta <- ggplot(atlanta, aes(x=atlanta$year, y=atlanta$centered, group=atlanta$year))
+BB.boxplot.atlanta <- BB.boxplot.atlanta + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-50, 50)
+BB.boxplot.atlanta <- BB.boxplot.atlanta + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("atlanta")
+# BB.boxplot.ny 
+BB.boxplot.ny <- ggplot(ny, aes(x=ny$year, y=ny$centered, group=ny$year))
+BB.boxplot.ny <- BB.boxplot.ny + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-50, 50)
+BB.boxplot.ny <- BB.boxplot.ny + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("ny")
+
+BB.boxplot.dallas
+BB.boxplot.stlouis
+BB.boxplot.atlanta
+BB.boxplot.ny
+
+################
+## four plots (richmond, sf, kc, minneapolis)
+################
+
+# BB.boxplot.richmond 
+BB.boxplot.richmond <- ggplot(richmond, aes(x=richmond$year, y=richmond$centered, group=richmond$year))
+BB.boxplot.richmond <- BB.boxplot.richmond + geom_boxplot(outlier.colour = "black", outlier.shape = 16, outlier.size = 2) + ylim(-70, 50)
+BB.boxplot.richmond <- BB.boxplot.richmond + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("richmond")
+# BB.boxplot.sf 
+BB.boxplot.sf <- ggplot(sf, aes(x=sf$year, y=sf$centered, group=sf$year))
+BB.boxplot.sf <- BB.boxplot.sf + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-50, 50)
+BB.boxplot.sf <- BB.boxplot.sf + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("sf")
+# BB.boxplot.kc 
+BB.boxplot.kc <- ggplot(kc, aes(x=kc$year, y=kc$centered, group=kc$year))
+BB.boxplot.kc <- BB.boxplot.kc + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-50, 50)
+BB.boxplot.kc <- BB.boxplot.kc + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("kc")
+# BB.boxplot.minneapolis
+BB.boxplot.minneapolis <- ggplot(minneapolis, aes(x=minneapolis$year, y=minneapolis$centered, group=minneapolis$year))
+BB.boxplot.minneapolis <- BB.boxplot.minneapolis + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-50, 50)
+BB.boxplot.minneapolis <- BB.boxplot.minneapolis + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("minneapolis")
+
+BB.boxplot.richmond
+BB.boxplot.sf
+BB.boxplot.kc
+BB.boxplot.minneapolis
+
+################
+## four plots (chicago, boston, cleveland, phili)
+################
+
+# BB.boxplot.chicago 
+BB.boxplot.chicago <- ggplot(chicago, aes(x=chicago$year, y=chicago$centered, group=chicago$year))
+BB.boxplot.chicago <- BB.boxplot.chicago + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-70, 50)
+BB.boxplot.chicago <- BB.boxplot.chicago + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("chicago")
+# BB.boxplot.boston 
+BB.boxplot.boston <- ggplot(boston, aes(x=boston$year, y=boston$centered, group=boston$year))
+BB.boxplot.boston <- BB.boxplot.boston + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-50, 50)
+BB.boxplot.boston <- BB.boxplot.boston + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("boston")
+# BB.boxplot.cleveland 
+BB.boxplot.cleveland <- ggplot(cleveland, aes(x=cleveland$year, y=cleveland$centered, group=cleveland$year))
+BB.boxplot.cleveland <- BB.boxplot.cleveland + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-50, 50)
+BB.boxplot.cleveland <- BB.boxplot.cleveland + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("cleveland")
+# BB.boxplot.phili 
+BB.boxplot.phili <- ggplot(phili, aes(x=phili$year, y=phili$centered, group=phili$year))
+BB.boxplot.phili <- BB.boxplot.phili + geom_boxplot(outlier.colour = "black", outlier.shape = 16,  outlier.size = 2) + ylim(-50, 50)
+BB.boxplot.phili <- BB.boxplot.phili + xlab("Date") + ylab("Sentiment (Centered)") + ggtitle("phili")
+
+BB.boxplot.chicago
+BB.boxplot.boston
+BB.boxplot.cleveland
+BB.boxplot.phili
+```
+
+Distributions are skewed, there are outliers, and homogeneity is out the window! 
+
+```{r fig.width=18, fig.height=10}
+# plot group means and confidence intervals requires {gplots}
+plotmeans(BB.sentiment$centered~BB.sentiment$location, xlab="Cities", ylab="Sentiment Centered",
+          main="Mean Plot with 95% CI") +
+abline(h=0)
+```
+
+Levene (1960) proposed a test for homogeneity of variances in k groups which is based on the ANOVA statistic applied to absolute deviations of observations from the corresponding group mean/median/trimmed mean. The robust Brown-Forsythe version of the Levene-type test substites the group mean by the group median in the classical Levene statistic. The third option is to consider ANOVA applied to the absolute deviations of observations from the group trimmed mean instead of the group means.
+
+Analysis of variance (ANOVA) is a classical test that accounts for difference of means across groups. 
+
+```{r echo=FALSE}
+install.packages("car")
+require(car)
+```
+
+```{r}
+leveneTest(BB.sentiment$score ~ BB.sentiment$location, data=BB.sentiment, center="mean")
+leveneTest(BB.sentiment$score ~ BB.sentiment$location, data=BB.sentiment, center="mean", trim=0.1)
+leveneTest(BB.sentiment$score ~ BB.sentiment$location, data=BB.sentiment, center="median")
+```
+
+```{r}
+# oneway.test tests whether multiples samples have the same means; variances are not necessarily assumed to be equal.
+# gives same results as anova(lm(y ~ x, data = data))
+bb.oneway <- oneway.test(BB.sentiment$score~BB.sentiment$location, data=BB.sentiment)
+bb.aov <- aov(BB.sentiment$score~BB.sentiment$location, data=BB.sentiment)
+```
+
+```{r fig.width=9, fig.height=8}
+summary(bb.oneway)
+summary(bb.aov)
+TukeyHSD(bb.aov)
+summary.lm(bb.aov)
+plot(bb.aov)
+```
+
